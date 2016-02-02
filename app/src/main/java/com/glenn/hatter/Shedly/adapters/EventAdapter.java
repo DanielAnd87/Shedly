@@ -52,7 +52,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
 
-    private boolean mChosen = false;
     private boolean mAreaChoice = false;
     private final int MINUTE = 10;
     private final int HOUR = MINUTE * 60;
@@ -513,24 +512,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
 
-    private void choseEventsToReplace(int fromDataPos) {
 
-        // changeToFreetime(fromDataPos);
-
-        Log.i(TAG, "choseEventsToReplace");
-        Log.i(TAG, "Deleting event");
-        for (Event event : mEvent) {
-            Log.i(TAG, "choseEventsToReplace(): " + ConvertToTime.convertToTime(event.getTime()) + "");
-        }
-
-        highlightArea();
-
-        Toast.makeText(mContext, R.string.event_removal_query, Toast.LENGTH_LONG).show();
-        notifyDataSetChanged();
-        Log.d(TAG, "choseEventsToReplace() called with: " + "fromDataPos = [" + fromDataPos + "]");
-
-        mChosen = true;
-    }
 
     public void choseEventsToReplace(int id, boolean brandNew) {
         // I choosing events to replace with here.
@@ -558,7 +540,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             highlightArea();
 
             Toast.makeText(mContext, R.string.put_event_query, Toast.LENGTH_LONG).show();
-            mChosen = true;
         } else {
             if (newDuration <= mNeededDur) {
                 // Firstly delete the original event.
