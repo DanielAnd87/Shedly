@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/new_event_relativelayout"
+                    android:elevation="14dp"
+                    android:clickable="true"
+                    android:background="#0080E8">
+
+        <EditText
+            android:id="@+id/events_name_textfield"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:focusable="true"
+            android:hint="@string/name_edit_label"
+            android:textColor="@color/white"
+            android:layout_marginBottom="10dp"
+            android:background="@color/colorPrimary"
+            android:textColorHint="#CCCCCC"
+            android:layout_toRightOf="@+id/cancel_event"
+            android:layout_toLeftOf="@+id/comfirm_event_button"
+            android:layout_toStartOf="@+id/comfirm_event_button"
+            android:layout_alignParentTop="true"/>
+
+        <TextView
+            android:id="@+id/duration_textfield"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:paddingLeft="10dp"
+            android:textSize="15dp"
+            android:paddingBottom="5dp"
+            android:text="@string/travel_time_textfield"
+            android:layout_below="@+id/events_name_textfield"
+            android:layout_alignLeft="@+id/textView3"
+            android:layout_alignStart="@+id/textView3"/>
+
+
+        <LinearLayout
+            android:id="@+id/duration_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00ACF4"
+
+            android:orientation="vertical"
+            android:paddingTop="10dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="10dp"
+            android:layout_below="@+id/travel_textfield"
+            android:layout_alignLeft="@+id/travel_textfield"
+            android:layout_alignStart="@+id/travel_textfield">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:orientation="horizontal"
+                >
+
+
+                <NumberPicker
+                    android:id="@+id/hour_picker"
+                    android:layout_width="@dimen/numberpicker_width"
+                    android:layout_height="wrap_content"
+                    />
+                <NumberPicker
+                    android:id="@+id/numberPicker"
+                    android:layout_width="@dimen/numberpicker_width"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/repeat_background"
+            android:background="#00ACF4"
+            android:layout_below="@+id/time_textfield"
+            android:layout_alignLeft="@+id/time_switch"
+            android:layout_alignStart="@+id/time_switch"
+            android:layout_alignBottom="@+id/stop_time_label"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <TextView
+            android:id="@+id/travel_textfield"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:paddingLeft="10dp"
+            android:paddingBottom="5dp"
+            android:textSize="15dp"
+            android:text="@string/duration_textfield"
+            android:layout_below="@+id/events_name_textfield"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/duration_layout"
+            android:background="#00ACF4"
+            android:layout_alignBottom="@+id/duration_layout"
+            android:id="@+id/textView5"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/duration_textfield"
+            android:layout_alignLeft="@+id/travel_to_label"
+            android:layout_alignStart="@+id/travel_to_label"/>
+
+
+    <TextView
+            android:id="@+id/travel_to_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/travel_checkbox_label_to"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            android:layout_below="@+id/duration_textfield"
+            android:layout_alignLeft="@+id/frekventspinner"
+            android:layout_alignStart="@+id/frekventspinner"/>
+
+
+        <CheckBox
+            android:id="@+id/travel_to_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#755600"
+            android:checked="false"
+            android:layout_toLeftOf="@+id/numberPicker_travel_dur_to"
+            android:layout_below="@+id/travel_to_label"
+
+            />
+
+
+        <NumberPicker
+            android:layout_width="@dimen/numberpicker_width"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="45dp"
+            android:id="@+id/numberPicker_travel_dur_to"
+            android:paddingTop="10dp"
+            android:layout_alignTop="@+id/numberPicker_travel_dur_from"
+            android:layout_toLeftOf="@+id/numberPicker_travel_dur_from"
+            />
+
+        <TextView
+            android:id="@+id/travel_from_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/travel_checkbox_label_from"
+            android:paddingTop="10dp"
+            android:layout_marginRight="5dp"
+            android:layout_above="@+id/travel_from_checkbox"
+            android:layout_alignRight="@+id/travel_from_checkbox"
+            android:layout_alignEnd="@+id/travel_from_checkbox"/>
+
+
+        <CheckBox
+            android:id="@+id/travel_from_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#755600"
+            android:checked="false"
+            android:layout_alignTop="@+id/travel_to_checkbox"
+            android:layout_toLeftOf="@+id/numberPicker_travel_dur_from"
+            android:layout_toStartOf="@+id/numberPicker_travel_dur_from"/>
+
+
+        <NumberPicker
+            android:layout_width="@dimen/numberpicker_width"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="right"
+            android:id="@+id/numberPicker_travel_dur_from"
+            android:layout_above="@+id/repete_textfield"
+            android:layout_alignRight="@+id/textView5"
+            android:layout_alignEnd="@+id/textView5"/>
+
+        g<TextView
+        android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:paddingLeft="15dp"
+        android:textSize="10sp"
+        android:textColor="@color/white"
+        android:layout_height="wrap_content"
+        android:text="@string/new_event_frequency_query"
+        android:paddingRight="5dp"
+
+
+        android:id="@+id/textView3"
+        android:layout_above="@+id/background_repeat"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/background_repeat"
+            android:background="#00ACF4"
+            android:layout_below="@+id/repete_textfield"
+            android:layout_alignLeft="@+id/frekvensy_switch"
+            android:layout_alignStart="@+id/frekvensy_switch"
+            android:layout_above="@+id/time_textfield"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <Switch
+            android:id="@+id/frekvensy_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/switch_textsize"
+            android:layout_gravity="right"
+            android:padding="6dp"
+            android:layout_below="@+id/repete_textfield"
+            android:layout_alignLeft="@+id/repete_textfield"
+            android:layout_alignStart="@+id/repete_textfield"/>
+        <Spinner
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/frekventspinner"
+            android:layout_weight="1"
+
+            android:layout_marginRight="10dp"
+            android:layout_below="@+id/repete_textfield"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/time_switch"
+            android:checked="false"
+            android:padding="6dp"
+            android:textColor="#85650B"
+            android:textSize="@dimen/switch_textsize"
+            android:layout_below="@+id/time_textfield"
+            android:layout_alignLeft="@+id/time_textfield"
+            android:layout_alignStart="@+id/time_textfield"/>
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/start_time_explanation_text"
+            android:text="@string/time_to_textfield"
+            android:paddingRight="5dp"
+            android:paddingEnd="5dp"
+            android:layout_gravity="right"
+            android:paddingLeft="10dp"
+            android:paddingStart="10dp"
+            android:textSize="15sp"
+            android:layout_below="@+id/imageView"
+            android:layout_alignLeft="@+id/travel_to_checkbox"
+            android:layout_alignStart="@+id/travel_to_checkbox"
+            android:layout_alignBottom="@+id/stop_time_label"
+            android:gravity="fill_vertical"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/start_time_label"
+            android:layout_gravity="end"
+            android:textColor="@color/white"
+            android:layout_marginRight="10dp"
+            android:text="@string/default_time_label"
+            android:textSize="27sp"
+            android:layout_below="@+id/time_textfield"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <TextView
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/stop_time_explanation_text"
+            android:paddingRight="5dp"
+            android:paddingLeft="10dp"
+            android:text="@string/time_from_textfield"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:layout_gravity="end"
+            android:textSize="15sp"
+            android:layout_alignTop="@+id/repeat_background"
+            android:layout_alignLeft="@+id/start_time_explanation_text"
+            android:layout_alignStart="@+id/start_time_explanation_text"
+            android:layout_alignBottom="@+id/start_time_label"
+            android:gravity="fill_vertical"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/stop_time_label"
+            android:text="@string/default_time_label"
+            android:layout_marginRight="10dp"
+            android:textColor="@color/white"
+            android:layout_gravity="end"
+            android:textSize="27sp"
+            android:layout_below="@+id/imageView"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <TextView
+            android:id="@+id/repete_textfield"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/white"
+            android:paddingLeft="10dp"
+            android:text="@string/repeat_textfield"
+            android:layout_below="@+id/duration_layout"
+            android:layout_alignLeft="@+id/duration_layout"
+            android:layout_alignStart="@+id/duration_layout"/>
+
+        <TextView
+            android:id="@+id/time_textfield"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/white"
+            android:paddingLeft="10dp"
+            android:text="@string/time_textfield"
+            android:layout_below="@+id/frekventspinner"
+            android:layout_alignLeft="@+id/frekvensy_switch"
+            android:layout_alignStart="@+id/frekvensy_switch"/>
+        <TextView
+            android:id="@+id/color_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:textColor="@color/white"
+            android:paddingLeft="10dp"
+            android:text="@string/new_event_color_text"
+            android:layout_below="@+id/repeat_background"
+            android:layout_alignLeft="@+id/frekvensy_switch"
+            android:layout_alignStart="@+id/frekvensy_switch"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@+id/imageView"
+            android:layout_marginTop="3dp"
+            android:src="@drawable/ic_path5607"
+            android:layout_below="@+id/time_switch"
+            android:layout_alignLeft="@+id/time_switch"
+            android:layout_alignStart="@+id/time_switch"
+            android:scaleType="centerCrop"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:textSize="10sp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="@string/new_event_tap_to_change"
+            android:paddingRight="5dp"
+
+            android:id="@+id/tap_to_change_query"
+            android:layout_above="@+id/repeat_background"
+            android:layout_alignRight="@+id/repeat_background"
+            android:layout_alignEnd="@+id/repeat_background"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/curtain_view"
+            android:clickable="true"
+            android:background="#217867"
+            android:visibility="gone"
+            android:layout_alignTop="@+id/time_textfield"
+            android:layout_alignLeft="@+id/repeat_background"
+            android:layout_alignStart="@+id/repeat_background"
+            android:layout_alignRight="@+id/textView3"
+            android:layout_alignEnd="@+id/textView3"
+            android:layout_alignBottom="@+id/repeat_background"/>
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:text="New Button"
+        android:id="@+id/cancel_event"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:src="@mipmap/ic_back_pixel"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/events_name_textfield"/>
+
+    <ImageButton
+        android:id="@+id/comfirm_event_button"
+        android:src="@mipmap/ic_done_white"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:text="New Button"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/textView5"
+        android:layout_alignEnd="@+id/textView5"
+        android:layout_alignBottom="@+id/events_name_textfield"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/color_recyclerView"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_height="50dp"
+        android:layout_below="@+id/color_text"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        />
+
+
+</RelativeLayout>

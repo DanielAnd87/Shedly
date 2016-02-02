@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:paddingTop="8dp"
+                android:layout_marginTop="2dp"
+                android:paddingBottom="8dp"
+                android:elevation="6dp"
+                android:orientation="horizontal"
+                android:id="@+id/queue_list_item_layout"
+                android:background="#2196F3"
+                android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Coffebreak"
+        android:textSize="15sp"
+        android:layout_margin="3dp"
+        android:paddingLeft="15dp"
+        android:gravity="center_vertical"
+        android:id="@+id/event_label"
+        android:textColor="@color/white"
+        android:layout_weight="4"
+        android:layout_gravity="center_vertical"
+        />
+
+    android:layout_marginRight="5dp"
+    android:gravity="center_vertical"
+    <ImageButton
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_weight="1"
+        android:src="@drawable/ic_action_binnie"
+        android:background="#00ffffff"
+        android:paddingBottom="7dp"
+
+        android:layout_gravity="center_vertical"
+        android:id="@+id/delete_button"
+        />
+
+</LinearLayout>

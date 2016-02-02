@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">Shedly</string>
+    <string name="dialog_name">New event is built here</string>
+    <string name="dialog_duration_question">Seven kilometer long?</string>
+    <string name="dialog_action_button">Then well fire it up !</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="freetime_text">Fritid, tryck för att hitta dina event!</string>
+    <string name="default_time_label">--:--</string>
+    <string name="freetime_label">Fritid</string>
+    <string name="night_greeting_label">Good natt!</string>
+    <string name="morning_greeting_label">Good morgon</string>
+    <string name="eventing_greeting_label">Middag</string>
+    <string name="evening_greeting_label">Kväll</string>
+    <string name="replan_label">Planera om</string>
+    <string name="eventbin_label">Dina fasta tider</string>
+    <string name="saved_day_message">Hittade en sparad dag</string>
+    <string name="event_removal_query">Välj vilka event du vill ersätta.</string>
+    <string name="put_event_query">Tryck där du vill ha eventet</string>
+    <string name="adding_to_replacelist_message">Lägger den bland andra väntande event.</string>
+    <string name="move_down_freetime_query">Vänligen flytta ner en fritid och testa igen</string>
+    <string name="exuse_of_fixedtime_placement">Ledsen, men finns ingen fritid där.</string>
+    <string name="adding_to_appointment_message">Lagt den bland dina andra fasta event.</string>
+    <string name="exuse_when_moving_fixedtime">Fasta tider kan inte flyttas</string>
+    <string name="exuse_when_to_big_message">Ledsen, men den passar inte där.</string>
+    <string name="exuse_for_impossible">Ledsen, men det är omöjligt.</string>
+    <string name="exuse_for_clock">"Ledsen men var bara tid till "</string>
+    <string name="exuse_for_clock_not_moving">Ledsen, men finns ingen tid till det.</string>
+    <string name="removing_event_message">Tar bort eventet</string>
+    <string name="restore_button_label">Återställ bortagna event</string>
+    <string name="repeat_textfield">Upprepa</string>
+    <string name="travel_time_textfield">Res tid</string>
+    <string name="travel_checkbox_label_to">Till</string>
+    <string name="travel_checkbox_label_from">Från</string>
+    <string name="duration_textfield">Längd</string>
+    <string name="time_textfield">Fast tid</string>
+    <string name="time_from_textfield">från</string>
+    <string name="time_to_textfield">till</string>
+    <string name="name_edit_label">Namn på event</string>
+    <string name="event_choise_query">Bocka av allt som är del av din vardag.</string>
+    <string name="long_duration_extra_label">" timmar lång..."</string>
+    <string name="start_event_breakfast">Frukost</string>
+    <string name="start_event_lunch">Lunch</string>
+    <string name="start_event_supper">Middag</string>
+    <string name="start_event_cleanup">Städning</string>
+    <string name="start_event_morning_hygiene">Morgon hygien</string>
+    <string name="quene_type_label">Vanliga Event</string>
+    <string name="quene_type_label_fixed">Fasta Event</string>
+    <string name="new_event_repeate_label">Upprepa</string>
+    <string name="cancel_label">CANCEL</string>
+    <string name="new_event_frequency_query">Välj periodicitet</string>
+    <string name="start_event_cooking">Laga mat</string>
+    <string name="start_event_workout">Träna</string>
+    <string name="welcome_text">Välkommen till Shedly</string>
+    <string name="new_event_tap_to_change">Tap to change</string>
+    <string name="start_event_study">Plugga</string>
+    <string name="new_event_color_text">Färg</string>
+    <string name="new_event_fragmet_frequensy_daily">Dagligen</string>
+    <string name="new_event_fragmet_frequensy_weekly">Varje vecka</string>
+    <string name="new_event_fragmet_frequensy_bi_weekly">Varannan vecka</string>
+    <string name="new_event_fragmet_frequensy_monthly">Varje månad</string>
+    <string name="new_event_fragmet_frequensy_weekdays">Vardagar</string>
+    <string name="new_event_fragmet_frequensy_weekends">Helger</string>
+    <string name="new_event_fragmet_frequensy_fourht_week">Var fjärde vecka</string>
+
+
+</resources>
