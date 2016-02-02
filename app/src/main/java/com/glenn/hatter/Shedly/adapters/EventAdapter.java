@@ -44,9 +44,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     // for now I replace mReplaceList where it is needed.
     private ArrayList<Event> mOrdinaryEventQueue = new ArrayList<>();
     private ArrayList<Event> mBinedFixedEvents = new ArrayList<>();
-    // I think this is where the unused events goes.
-
-    private ArrayList<Integer> mEventsToBeReplacedRef = new ArrayList<>();
 
     private Communicator mCommunicator;
 
@@ -443,43 +440,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
 
-    public void swipeToDismiss(int itemId, boolean refill) {
-        Event deletedEvent = deleteAndReplaceEvent(itemId);
-
-        if (!refill) {
-            mEventsToBeReplacedRef.remove(0);
-        }
-
-        // todo: Should put the removed event in a queue list
-
-        if (refill) {
-            fillWithNewEvents(deletedEvent.getDuration(), itemId);
-        }
-
-        //todo: Looks awful! try to animate the apperance of new events. Maybe they should grow slitely and srink back again.
-        notifyDataSetChanged();
-
-
-    }
-
     private Event deleteAndReplaceEvent(int position) {
         Event deletedEvent = mEvent.get(position);
         mEvent.remove(position);
         mEvent.remove(position - 1);
-
-        // If I currently is chosing event to replace then I'm correcting those references here everytime an event is deleted.
-        if (mChosen) {
-
-            if (mEventsToBeReplacedRef.contains(position)) {
-                for (int y = 0; y < mEventsToBeReplacedRef.size(); y++) {
-                    // Because I removed an index in mEvent it means that all indexes above is changed, and I need to change all those references in the data-list
-                    if (mEventsToBeReplacedRef.get(y) > position) {
-                        mEventsToBeReplacedRef.set(y, mEventsToBeReplacedRef.get(y) - 2);
-                    }
-                }
-
-            }
-        }
 
         notifyItemRemoved(position);
         notifyItemRemoved(position - 1);
@@ -617,9 +581,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
                 } else {
                     // Let the user pick events to replace with.
-                    // Dosen't work!
-                    // Todo: The following method always delete the event in fromEventPos and replace it with an "fillup". This will probably cause problem here.
-                    choseEventsToReplace(fromEventPos);
 
                     replaceWithChangedEvent(fromEventPos, newDuration);
 
@@ -1874,26 +1835,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                         }
                     }
                 }
-        }
-
-        private void setHighligth(Event chosen) {
-            if (mAreaChoice) {
-                boolean inSelectedArea = chosen.getIsInSelectedArea();
-                if (!inSelectedArea) {
-
-
-                    searchAndSelectInArea(getLayoutPosition(), true);
-
-
-                }
-                // Todo: Because I only want the selected area to be deselected when there is no events left in the mEventQueneRef then
-                else if (mEventsToBeReplacedRef.size() == 0) {
-
-
-                    searchAndSelectInArea(getLayoutPosition(), false);
-                }
-
-            }
         }
 
     }
