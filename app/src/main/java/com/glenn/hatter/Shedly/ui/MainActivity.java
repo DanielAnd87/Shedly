@@ -27,8 +27,6 @@ import com.glenn.hatter.Shedly.ui.fragments.NewEventFragment;
 import com.glenn.hatter.Shedly.interfaces.Communicator;
 import com.glenn.hatter.Shedly.model.ConvertToTime;
 import com.glenn.hatter.Shedly.model.SortEvent;
-import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -47,12 +45,6 @@ public class MainActivity extends Activity implements Communicator {
     private Calendar mCalendar = Calendar.getInstance();
     private Calendar mTimeCal = Calendar.getInstance();
     private TextView mDateText;
-
-
-
-
-
-
     // Initiates the daybook so I can make a index from it (mCheesIndex) and send that to the adapter. Later I will reorder the index and reference it to the Daybook class.
     private ArrayList<Event> mEvent = new ArrayList<>();
     private EventAdapter adapter;
@@ -110,7 +102,7 @@ public class MainActivity extends Activity implements Communicator {
             public void onClick(View view) {
                 Date date = mCalendar.getTime();
                 long timeStamp = (date.getTime()/1000);
-                Bundle bundle = adapter.communicateEventpreferences(new Event("New event", 10), timeStamp);
+                Bundle bundle = communicateEventpreferences(new Event("New event", 10), timeStamp);
 
                 mFragmentManager = getFragmentManager();
                 mNewEventFragment = new NewEventFragment();
@@ -232,6 +224,32 @@ public class MainActivity extends Activity implements Communicator {
         newFragment.show(getFragmentManager(), "datePicker");
     }
 
+
+
+    private Bundle communicateEventpreferences(Event event, long timeStamp) {
+        // Will send the name and duration to EventFragment
+        int dur = event.getDuration();
+        String name = event.getName();
+
+        Bundle bundle = new Bundle();
+
+        bundle.putString(Constants.NEW_EVENT_NAME, name);
+        bundle.putString(Constants.REPEATING, event.getRecurring());
+        bundle.putInt(Constants.NEW_MINUTE, ConvertToTime.getMinute(dur));
+        bundle.putInt(Constants.NEW_HOUR, ConvertToTime.getHour(dur));
+        bundle.putInt(Constants.FIXEDTIME_VALUE, event.getFixedTime());
+        bundle.putInt(Constants.TRAVEL_DURATION_FROM, event.getTravelDurationFrom());
+        bundle.putInt(Constants.TRAVEL_DURATION_TO, event.getTravelDurationTo());
+        bundle.putInt(Constants.TIMESTAMP, (int) timeStamp);
+
+
+        bundle.putBoolean(Constants.NEW_EVENT_BOOLEAN, true);
+        bundle.putInt(Constants.NEW_EVENT_ID, -1);
+
+
+        return bundle;
+    }
+
     private String setDate(Calendar calendar) {
         //DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         DateFormat dateFormat = DateFormat.getDateInstance();
@@ -250,7 +268,6 @@ public class MainActivity extends Activity implements Communicator {
     private void readAndSortEvents() {
         mEvent = mDatasource.read();
         // Checking if morning and eventing is there and add it if not.
-
         if (mEvent.size() == 0) {
             start(this);
         }
@@ -275,7 +292,7 @@ public class MainActivity extends Activity implements Communicator {
     @Override
     protected void onPause() {
         super.onPause();
-        adapter.saveDate(mDatasource);
+        adapter.saveDate();
         Toast.makeText(this, "Day saved.", Toast.LENGTH_SHORT).show();
 
     }
@@ -284,11 +301,7 @@ public class MainActivity extends Activity implements Communicator {
     public void sendQueneIndex(int evenId, int mEventpos) {
         if (mEventpos == -1) {
             Event event = adapter.getEventFromId(evenId);
-            if (event.isFixedTime()) {
-                adapter.addEvent(event, false);
-            } else {
-                adapter.choseEventsToReplace(evenId, true);
-            }
+            adapter.addEvent(event, false);
         } else {
             adapter.removeFreetime(evenId, mEventpos);
         }

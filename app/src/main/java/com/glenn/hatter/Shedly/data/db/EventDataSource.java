@@ -28,12 +28,9 @@ public class EventDataSource {
     private int J = 1;
     private int N = 0;
 
-    private Context mContext;
     private EventSQLiteHelper mEventSqlLiteHelper;
 
     public EventDataSource(Context context) {
-
-        mContext = context;
         mEventSqlLiteHelper = new EventSQLiteHelper(context);
     }
 

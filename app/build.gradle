@@ -25,4 +25,7 @@ dependencies {
     compile 'com.getbase:floatingactionbutton:1.10.0'
     compile 'com.android.support:design:23.1.0'
     compile 'com.android.support:appcompat-v7:23.1.0'
+    testCompile "org.robolectric:robolectric:3.0"
+
+    compile 'junit:junit:4.8.2'
 }

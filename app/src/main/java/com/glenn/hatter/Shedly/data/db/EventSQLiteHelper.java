@@ -8,6 +8,8 @@ import android.provider.BaseColumns;
 /**
  * Created by hatter on 2015-09-01.
  */
+
+
 public class EventSQLiteHelper extends SQLiteOpenHelper {
 
     // If I change the database schema I must increment the database version.
