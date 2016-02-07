@@ -116,6 +116,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
 
     public Bundle getEventQuene(int layoutPosition, boolean ordinary) {
+
         return mEventHandler.getEventQuene(layoutPosition, ordinary);
     }
 

@@ -153,6 +153,7 @@ public class EventQueneAdapter extends RecyclerView.Adapter<EventQueneAdapter.Ev
             } else {
                 // The color should only indicate size if it is'nt a fixedTime list.
                 if (event.getDuration() > mFreetimeDuration) {
+                    // Setts to red if it dosent fit.
                     mItemLayout.setBackgroundColor(Color.parseColor("#FF5722"));
                 }
             }

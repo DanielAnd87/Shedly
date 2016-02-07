@@ -45,7 +45,7 @@
     <string name="start_event_supper">Middag</string>
     <string name="start_event_cleanup">Städning</string>
     <string name="start_event_morning_hygiene">Morgon hygien</string>
-    <string name="quene_type_label">Vanliga Event</string>
+    <string name="quene_type_label">Saker att göra</string>
     <string name="quene_type_label_fixed">Fasta Event</string>
     <string name="new_event_repeate_label">Upprepa</string>
     <string name="cancel_label">CANCEL</string>

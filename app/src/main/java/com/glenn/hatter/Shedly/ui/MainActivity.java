@@ -299,8 +299,9 @@ public class MainActivity extends Activity implements Communicator {
 
     @Override
     public void sendQueneIndex(int evenId, int mEventpos) {
-        if (mEventpos == -1) {
-            Event event = adapter.getEventFromId(evenId);
+        // Checking if event is a FixedTime.
+        Event event = adapter.getEventFromId(evenId);
+        if (event.isFixedTime()) {
             adapter.addEvent(event, false);
         } else {
             adapter.removeFreetime(evenId, mEventpos);

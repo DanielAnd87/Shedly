@@ -520,6 +520,7 @@ public class EventHandler {
                     Log.i(TAG, "addEvent: '" + event1.getName() + "' at " + event1.getTime());
                 }
                 mAdapterContext.notifyDataSetChanged();
+                removeEventFromBin(event);
             }
             // Check if there is a freetime around, no fixedTime in the spot, and that the freetime is big enough to absorb this event.
             else if (potentialFreeEvent.getFixedTime() <= 0 && !potentialFreeEvent.getName().equals("")) {
@@ -572,6 +573,9 @@ public class EventHandler {
                     for (Event event1 : mEvent) {
                         Log.i(TAG, "addEvent: '" + event1.getName() + "' at " + event1.getTime());
                     }
+                    removeEventFromBin(event);
+
+
                     updateAllTimes();
                     mAdapterContext.notifyDataSetChanged();
 
@@ -588,7 +592,7 @@ public class EventHandler {
                         updateAllTimes();
                         // re-run the method
                         placeFixedTime(event);
-
+                        removeEventFromBin(event);
                     }
                     // TODO: 2015-11-22 rename
                     Toast.makeText(mContext, R.string.exuse_of_fixedtime_placement, Toast.LENGTH_SHORT).show();
@@ -605,6 +609,17 @@ public class EventHandler {
             mBinedFixedEvents.add(event);
         }
     }
+
+    private void removeEventFromBin(Event event) {
+        // Remove event from eventbin because of succes.
+        for (int i = 0; i < mBinedFixedEvents.size(); i++) {
+            if (mBinedFixedEvents.get(i).getId() == event.getId()) {
+                mBinedFixedEvents.remove(i);
+                i--;
+            }
+        }
+    }
+
     private int findRecentFixedTime(int index, boolean up) {
         int theIndexInData = -1;
         int dir;
@@ -1330,19 +1345,16 @@ public class EventHandler {
 
         Bundle bundle = new Bundle();
 
-        if (ordinary) {
-            for (Event event : mReplaceList) {
-                eventQueneList.add(event.getId());
-                bundle.putInt(Constants.FREETIME_DURATION, mEvent.get(layoutPosition).getDuration());
-                bundle.putBoolean(Constants.ORDINARY_LIST, true);
-            }
-        } else {
-            for (Event event : mBinedFixedEvents) {
-                eventQueneList.add(event.getId());
-                bundle.putInt(Constants.FREETIME_DURATION, -1);
-                bundle.putBoolean(Constants.ORDINARY_LIST, false);
-            }
+        // Adding both my ordinary replace list and my bined events to the bundle.
+        for (Event event : mReplaceList) {
+            eventQueneList.add(event.getId());
         }
+        for (Event event : mBinedFixedEvents) {
+            eventQueneList.add(event.getId());
+        }
+
+        bundle.putInt(Constants.FREETIME_DURATION, mEvent.get(layoutPosition).getDuration());
+        bundle.putBoolean(Constants.ORDINARY_LIST, true);
         bundle.putIntegerArrayList("event quene", eventQueneList);
         bundle.putInt("event position", layoutPosition);
 
