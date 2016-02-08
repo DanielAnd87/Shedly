@@ -23,8 +23,6 @@ import java.util.List;
  */
 public class EventHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private final EventAdapter mAdapterContext;
-
 
     private ArrayList<Event> mEvent = new ArrayList<>();
     private ArrayList<Event> mReplaceList = new ArrayList<>();
@@ -42,11 +40,10 @@ public class EventHandler {
 
     private Context mContext;
 
-    public EventHandler(Context context, EventDataSource datasource, EventAdapter adapterContext, Calendar calendar, ArrayList<Event> list) {
+    public EventHandler(Context context, EventDataSource datasource, Calendar calendar, ArrayList<Event> list) {
         mDatasource = datasource;
         mCalendar = calendar;
         mContext = context;
-        mAdapterContext = adapterContext;
         mRemovedEvents.addAll(list);
         for (Event event : list) {
             mReplaceList.add(mReplaceList.size(), event);
@@ -249,12 +246,6 @@ public class EventHandler {
 
     public boolean move(int fromPos, int toPos) {
 
-        if (mEvent.get(fromPos).isFixedTime()) {
-            mAdapterContext.notifyDataSetChanged();
-            Toast.makeText(mContext, R.string.exuse_when_moving_fixedtime, Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
         int fromEventDuration = mEvent.get(fromPos).getDuration();
 
 
@@ -266,10 +257,7 @@ public class EventHandler {
 
         // If the position that is to be replaced isn't a fixedTime, then change positions.
         if (!mEvent.get(toPos).isFixedTime()) {
-
-
             int direction = -1;
-            int range = 1;
             if (fromPos > toPos) {
                 // Drags UPWARD
                 direction = -1;
@@ -303,7 +291,6 @@ public class EventHandler {
                     boolean keepGoing = findingAndChangingFreetime(toPos - 2, fromEventDuration, 1);
                     if (!keepGoing) {
                         Toast.makeText(mContext, R.string.exuse_when_to_big_message, Toast.LENGTH_SHORT).show();
-                        mAdapterContext.notifyDataSetChanged();
                         return false;
                     }
                     swappingFixedEvent(fromPos, toPos, fromTime, toTimeDuration, direction);
@@ -313,7 +300,7 @@ public class EventHandler {
 
                     fixingFixedTime(wrongFixedTime);
 
-                    mAdapterContext.notifyDataSetChanged();
+                    //mAdapterContext.notifyDataSetChanged();
                     Log.i(TAG, "move: Duration of the moved Event: " + ConvertToTime.convertToTime(fromEventDuration));
                     Log.i(TAG, "move: Swapping '" + mEvent.get(fromPos).getName() + "' with '" + mEvent.get(toPos).getName() + "'");
                 }
@@ -327,7 +314,6 @@ public class EventHandler {
 
                     if (!keepGoing) {
                         Toast.makeText(mContext, R.string.exuse_when_to_big_message, Toast.LENGTH_SHORT).show();
-                        mAdapterContext.notifyDataSetChanged();
                         return false;
                     }
 
@@ -345,7 +331,7 @@ public class EventHandler {
 
                     fixingFixedTime(wrongFixedTime);
 
-                    mAdapterContext.notifyDataSetChanged();
+                    //mAdapterContext.notifyDataSetChanged();
                     Log.i(TAG, "move: Duration of the moved Event: " + ConvertToTime.convertToTime(fromEventDuration));
                     Log.i(TAG, "move: Swapping '" + mEvent.get(fromPos).getName() + "' with '" + mEvent.get(toPos).getName() + "'");
 
@@ -357,7 +343,7 @@ public class EventHandler {
                 }
             } else {
                 Toast.makeText(mContext, R.string.exuse_for_impossible, Toast.LENGTH_SHORT).show();
-                mAdapterContext.notifyDataSetChanged();
+                return false;
             }
         }
 
@@ -369,7 +355,7 @@ public class EventHandler {
     private void fixingFixedTime(int wrongFixedTime) {
         if (wrongFixedTime != -1) {
             // Must check if viewType is 1.
-            if (mAdapterContext.getItemViewType(wrongFixedTime) == 0) {
+            if (wrongFixedTime % 2 == 0) {
                 wrongFixedTime++;
             }
             // saving the fixedTime before I remove it.
@@ -491,35 +477,26 @@ public class EventHandler {
 
                 // add it at its fixedtime at it's place and do fillWithNewEvent in both side of the fixedTime.
                 mEvent.remove(potentialFreetimeIndex);
-                mAdapterContext.notifyItemRemoved(potentialFreetimeIndex);
                 Log.i(TAG, "addEvent: Removing '" + mEvent.get(potentialFreetimeIndex).getName() + "' at " + ConvertToTime.convertToTime(potentialFreeEvent.getTime()));
                 mEvent.remove(potentialFreetimeIndex);
-                mAdapterContext.notifyItemRemoved(potentialFreetimeIndex);
                 Log.i(TAG, "addEvent: Removing '" + mEvent.get(potentialFreetimeIndex).getName() + "' at " + ConvertToTime.convertToTime(potentialFreeEvent.getTime()));
                 Event freeEventBefore = new Event("FreeTime", freeTimeBefore, true);
                 freeEventBefore.setTime(event.getFixedTime() - freeTimeBefore);
                 mEvent.add(potentialFreetimeIndex, freeEventBefore);
 
-                mAdapterContext.notifyItemInserted(potentialFreetimeIndex);
 
                 mEvent.add(potentialFreetimeIndex, freeEventBefore);
 
-                mAdapterContext.notifyItemInserted(potentialFreetimeIndex);
                 event.setTime(event.getFixedTime());
                 mEvent.add(potentialFreetimeIndex + 2, event);
-                mAdapterContext.notifyItemInserted(potentialFreetimeIndex + 2);
                 mEvent.add(potentialFreetimeIndex + 2, event);
-                mAdapterContext.notifyItemInserted(potentialFreetimeIndex + 2);
                 Event freeEventAfter = new Event("FreeTime", freeTimeAfter, true);
                 freeEventAfter.setTime(event.getTime() + event.getDuration());
                 mEvent.add(potentialFreetimeIndex + 4, freeEventAfter);
-                mAdapterContext.notifyItemInserted(potentialFreetimeIndex + 4);
                 mEvent.add(potentialFreetimeIndex + 4, freeEventAfter);
-                mAdapterContext.notifyItemInserted(potentialFreetimeIndex + 4);
                 for (Event event1 : mEvent) {
                     Log.i(TAG, "addEvent: '" + event1.getName() + "' at " + event1.getTime());
                 }
-                mAdapterContext.notifyDataSetChanged();
                 removeEventFromBin(event);
             }
             // Check if there is a freetime around, no fixedTime in the spot, and that the freetime is big enough to absorb this event.
@@ -577,8 +554,6 @@ public class EventHandler {
 
 
                     updateAllTimes();
-                    mAdapterContext.notifyDataSetChanged();
-
 
                 } else {
                     if (freetimeIndex < potentialFreetimeIndex) {
@@ -598,7 +573,6 @@ public class EventHandler {
                     Toast.makeText(mContext, R.string.exuse_of_fixedtime_placement, Toast.LENGTH_SHORT).show();
                     // Else let the user know and put it in the binedEvents list.
                     mBinedFixedEvents.add(event);
-                    mAdapterContext.notifyDataSetChanged();
                 }
 
 
@@ -654,26 +628,19 @@ public class EventHandler {
             duration += mEvent.get(freetimePositionDown).getDuration();
             mEvent.remove(freetimePositionDown - 1);
             mEvent.remove(freetimePositionDown - 1);
-            mAdapterContext.notifyItemRemoved(freetimePositionDown - 1);
-            mAdapterContext.notifyItemRemoved(freetimePositionDown);
         }
         if (freetimePositionUp != -1) {
             mEvent.remove(freetimePositionUp - 1);
             mEvent.remove(freetimePositionUp - 1);
             pos -= 2;
-            mAdapterContext.notifyItemRemoved(freetimePositionUp - 1);
-            mAdapterContext.notifyItemRemoved(freetimePositionUp);
         }
         mEvent.remove(pos - 1);
         mEvent.remove(pos - 1);
 
-        mAdapterContext.notifyItemRemoved(pos - 1);
-        mAdapterContext.notifyItemRemoved(pos);
 
         //completelyDeleteEvent(Pos,true);
         addFreeTime(duration, pos - 1);
         updateAllTimes();
-        mAdapterContext.notifyDataSetChanged();
 
         if (recycle && !event.isFreeTime()) {
             if (event.getFixedTime() > 0) {
@@ -800,7 +767,7 @@ public class EventHandler {
 
     private void swappingFixedEvent(int fromPos, int toPos, int fromTime, int toTimeDuration, int dir) {
         //  int newToTime = toTime - fromTimeDuration*dir;
-        // TODO: 2015-10-09 The swapping can only be called if there is freeTime avalable for the swapped event.
+        // The swapping can only be called if there is freeTime avalable for the swapped event.
         int newFromTime = fromTime + toTimeDuration * dir;
         if (dir == -1) {
             newFromTime = mEvent.get(toPos).getFixedTime() - mEvent.get(fromPos).getDuration();
@@ -822,12 +789,6 @@ public class EventHandler {
         mEvent.remove(fromPos - 1);
         mEvent.add(toPos - 1, eventDraged);
         mEvent.add(toPos - 1, eventDraged);
-
-
-        mAdapterContext.notifyItemChanged(toPos - 1);
-        mAdapterContext.notifyItemChanged(fromPos - 1);
-        mAdapterContext.notifyItemMoved(fromPos, toPos);
-
     }
 
     private boolean findingAndChangingFreetime(int fromDataPos, int fromEventDur, int addOrSub) {
@@ -867,9 +828,6 @@ public class EventHandler {
 
         Log.i(TAG, "findingAndChangingFreetime: Changing duration of '" + freeTimeEventTime.getName() + "' at " + ConvertToTime.convertToTime(freeTimeEventTime.getTime()) + " to " + ConvertToTime.convertToTime(freeTimeEventTime.getDuration()));
         Log.i(TAG, "findingAndChangingFreetime: Changing changing of '" + freeTimeEvent.getName() + "' at " + ConvertToTime.convertToTime(freeTimeEvent.getTime()) + " to " + ConvertToTime.convertToTime(durationToChange));
-
-        mAdapterContext.notifyItemChanged(freetimeDataPos);
-        mAdapterContext.notifyItemChanged(freetimeDataPos - 1);
     }
 
     public int findingNearbyFreetimePosition(int dataPos) {
@@ -921,11 +879,11 @@ public class EventHandler {
         mEvent.add(toPos - 1, eventDraged);
         mEvent.add(toPos - 1, eventDraged);
 
-
+/*
         mAdapterContext.notifyItemChanged(toPos - 1);
         mAdapterContext.notifyItemChanged(fromPos - 1);
         mAdapterContext.notifyItemMoved(fromPos, toPos);
-
+*/
     }
 
     private int addingFixedTime(int time) {
@@ -1009,9 +967,6 @@ public class EventHandler {
         // Adding freetime
         mEvent.add(dataPos, freetime);
         mEvent.add(dataPos, freetime);
-        // notify the adapter
-        mAdapterContext.notifyDataSetChanged();
-
     }
 
 
@@ -1022,8 +977,6 @@ public class EventHandler {
         // Adding freetime
         mEvent.add(dataPos, freetime);
         mEvent.add(dataPos, freetime);
-        // notify the adapter
-        mAdapterContext.notifyDataSetChanged();
     }
 
     private void changeStartTime(List<Event> list) {
@@ -1067,9 +1020,6 @@ public class EventHandler {
         // The unused space should be filled with new events
         int remainingSpaceToFillup = duration;
         if (duration == 0) {
-            mAdapterContext.notifyItemRemoved(index);
-            mAdapterContext.notifyItemRangeChanged(index, 1);
-            //setTimes(index, true);
             updateAllTimes();
         }
         while (remainingSpaceToFillup > 0) {
@@ -1133,7 +1083,6 @@ public class EventHandler {
             int freetimeDuration = event.getDuration() + fromEventDur;
 
             fillWithNewEvents(freetimeDuration, freetimeDataPos);
-            mAdapterContext.notifyItemChanged(freetimeDataPos);
             return true;
         } else {
 
@@ -1145,10 +1094,6 @@ public class EventHandler {
         Event deletedEvent = mEvent.get(position);
         mEvent.remove(position);
         mEvent.remove(position - 1);
-
-        mAdapterContext.notifyItemRemoved(position);
-        mAdapterContext.notifyItemRemoved(position - 1);
-        mAdapterContext.notifyItemRangeChanged(position, 2);
         return deletedEvent;
     }
 
@@ -1160,9 +1105,6 @@ public class EventHandler {
         mEvent.remove(position - 1);
         // fillup the empty space.
         fillWithNewEvents(duration, position);
-
-        mAdapterContext.notifyDataSetChanged();
-
     }
 
 
@@ -1180,14 +1122,10 @@ public class EventHandler {
             mEvent.remove(pos - 1);
             mEvent.remove(pos - 1);
 
-            mAdapterContext.notifyItemRemoved(pos);
-            mAdapterContext.notifyItemRemoved(pos + 1);
-
             addFreeTime(replacedDuration - eventDuration, pos - 1);
             mEvent.add(pos - 1, event);
             mEvent.add(pos - 1, event);
             updateAllTimes();
-            mAdapterContext.notifyDataSetChanged();
         } else {
             Toast.makeText(mContext, mContext.getString(R.string.exuse_when_to_big_message), Toast.LENGTH_SHORT).show();
             // TODO: 2015-10-31 Implement chooseEventsToReplace when it's stable.
@@ -1197,9 +1135,8 @@ public class EventHandler {
 
     }
 
-    public void updateNight(int totalPixelMinutes) {
+    public void updateNight(int totalPixelMinutes, int nigthPos, int itemCount) {
         // check if there is a freetime around and save bothe place and its duration.
-        int nigthPos = mAdapterContext.getItemCount()-1;
         int freetimePos = findingFreetimePosition(nigthPos, true);
 
         // change morning duration if it is time. If
@@ -1217,12 +1154,12 @@ public class EventHandler {
 
             // change the time of the morning with the difference of old morning duration with the new one.
             if (deltaDur > 0 && deltaDur < freetimeDuration) {
-                changeNight(nightDuration, freetimePos, freetimeDuration, deltaDur);
-                mEvent.get(nigthPos-1).setFixedTime(totalPixelMinutes);
+                changeNight(nightDuration, freetimePos, freetimeDuration, deltaDur, itemCount);
+                mEvent.get(nigthPos - 1).setFixedTime(totalPixelMinutes);
                 mEvent.get(nigthPos).setFixedTime(totalPixelMinutes);
             } else if (deltaDur <= 0) {
-                changeNight(nightDuration, freetimePos, freetimeDuration, deltaDur);
-                mEvent.get(nigthPos-1).setFixedTime(totalPixelMinutes);
+                changeNight(nightDuration, freetimePos, freetimeDuration, deltaDur, itemCount);
+                mEvent.get(nigthPos - 1).setFixedTime(totalPixelMinutes);
                 mEvent.get(nigthPos).setFixedTime(totalPixelMinutes);
             } else {
                 mEvent.get(nigthPos-1).setDuration(originalNightDur + freetimeDuration);
@@ -1237,7 +1174,6 @@ public class EventHandler {
             // else the freetime is removed and morning consumes its place.
             // correcting all times in the list.
             updateAllTimes();
-            mAdapterContext.notifyDataSetChanged();
         } else {
             if (deltaDur <= 0) {
                 mEvent.get(nigthPos-1).setDuration(nightDuration);
@@ -1246,7 +1182,6 @@ public class EventHandler {
                 mEvent.get(nigthPos).setFixedTime(totalPixelMinutes);
                 addFreeTime(deltaDur * (-1), nigthPos - 1);
                 updateAllTimes();
-                mAdapterContext.notifyDataSetChanged();
             } else {
                 Toast.makeText(mContext, R.string.exuse_for_clock_not_moving, Toast.LENGTH_SHORT).show();
 
@@ -1284,14 +1219,12 @@ public class EventHandler {
             // else the freetime is removed and morning consumes its place.
             // correcting all times in the list.
             updateAllTimes();
-            mAdapterContext.notifyDataSetChanged();
         } else {
             if (deltaDur <= 0) {
                 mEvent.get(0).setDuration(totalPixelMinutes);
                 mEvent.get(1).setDuration(totalPixelMinutes);
                 addFreeTime(deltaDur * (-1), 2);
                 updateAllTimes();
-                mAdapterContext.notifyDataSetChanged();
             } else {
                 Toast.makeText(mContext, R.string.exuse_for_clock_not_moving, Toast.LENGTH_SHORT).show();
 
@@ -1306,13 +1239,11 @@ public class EventHandler {
         mEvent.get(freetimePos + 1).setDuration(freetimeDuration - deltaDur);
     }
 
-    private void changeNight(int totalPixelMinutes, int freetimePos, int freetimeDuration, int deltaDur) {
-        mEvent.get(mAdapterContext.getItemCount()-2).setDuration(totalPixelMinutes);
-        mEvent.get(mAdapterContext.getItemCount()-1).setDuration(totalPixelMinutes);
+    private void changeNight(int totalPixelMinutes, int freetimePos, int freetimeDuration, int deltaDur, int itemCount) {
+        mEvent.get(itemCount - 2).setDuration(totalPixelMinutes);
+        mEvent.get(itemCount - 1).setDuration(totalPixelMinutes);
         mEvent.get(freetimePos).setDuration(freetimeDuration - deltaDur);
         mEvent.get(freetimePos - 1).setDuration(freetimeDuration - deltaDur);
-        mAdapterContext.notifyItemChanged(mAdapterContext.getItemCount() - 1);
-        mAdapterContext.notifyItemChanged(mAdapterContext.getItemCount() - 2);
     }
 
     public Event getEventFromId(int evenId) {
@@ -1372,8 +1303,6 @@ public class EventHandler {
         //setTimes(LowEventIndex, true);
         updateAllTimes();
 
-        mAdapterContext.notifyItemInserted(LowEventIndex);
-        mAdapterContext.notifyItemInserted(LowEventIndex - 1);
         Log.i(TAG, "addAndSetTimeForNewEvent");
         Log.i(TAG, "Adding one event");
         for (Event event1 : mEvent) {
@@ -1386,6 +1315,9 @@ public class EventHandler {
         // My Getters for all lists.
     public ArrayList<Event> getEvents() {
         return mEvent;
+    }
+    public Event getEvent(int pos) {
+        return mEvent.get(pos);
     }
 
     public ArrayList<Event> getReplaceList() {

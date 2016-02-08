@@ -35,6 +35,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     private Context mContext;
 
     private Communicator mCommunicator;
+    private int mNumberOfFreetimes;
+
     public void setCommunicator(Communicator communicator) {
         mCommunicator = communicator;
     }
@@ -44,8 +46,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public EventAdapter(Context context, List<Event> list, EventDataSource datasource) {
         mContext = context;
         EventAdapter adapterContext = this;
-
-        mEventHandler = new EventHandler(context, datasource, adapterContext, Calendar.getInstance(), (ArrayList<Event>) list);
+        mNumberOfFreetimes = 0;
+        mEventHandler = new EventHandler(context, datasource, Calendar.getInstance(), (ArrayList<Event>) list);
     }
 
     public void createDay(List<Event> list) {
@@ -107,10 +109,57 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     public void addEvent(Event event, boolean brandNew) {
         mEventHandler.addEvent(event, brandNew);
+        notifyDataSetChanged();
     }
 
 
+    public void checkingFreeTimeChanged() {
+        int freeTimeNumber = 0;
+        ArrayList<Event> events = mEventHandler.getEvents();
+        for (int i = 0; i < events.size(); i++) {
+            // Checking if it is a freeTime and add it to freetimeNumber.
+            if (events.get(i).isFreeTime()) {
+                freeTimeNumber++;
+            }
+        }
 
+        // comparing the two freetime numbers and notifying change if fucked up.
+        if (freeTimeNumber > mNumberOfFreetimes) {
+            // Need to find the new one and add it.
+        } else if (freeTimeNumber < mNumberOfFreetimes) {
+            // Need to find the new one and remove it.
+        }
+    }
+
+    public void notifyMoved(int from, int to) {
+        notifyItemMoved(from, to);
+        notifyItemChanged(from - 1);
+        notifyItemChanged(to - 1);
+    }
+    public void notifyMoved(int from, int to, boolean movedOverFixedTime) {
+        // FIXME: 2016-02-08 This wont work because there will be items that is inserted and I need to notify about it after I move event.
+        /*
+        notifyItemMoved(from, to);
+        notifyItemChanged(from - 1);
+        notifyItemChanged(to - 1);
+
+        // Changing only the times.
+        ArrayList<Event> events = mEventHandler.getEvents();
+
+        for (int i = 2; i < events.size(); i+=2) {
+            notifyItemChanged(i);
+        }
+        // Changing only the freeTimes.
+        for (int i = 0; i < events.size(); i+=2) {
+            if (events.get(i).isFreeTime()) {
+                notifyItemChanged(i);
+            }
+        }
+        */
+
+        // TODO: 2016-02-08 This is a quickfix but try to do it properly in tha future!
+        notifyDataSetChanged();
+    }
 
 
 
@@ -121,21 +170,52 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     public boolean move(int fromPos, int toPos) {
+        if (mEventHandler.getEvent(fromPos).isFixedTime()) {
+            notifyDataSetChanged();
+            Toast.makeText(mContext, R.string.exuse_when_moving_fixedtime, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // If not a freeTime, as it ususally is'nt, then notify that two event has moved.
+        if (!mEventHandler.getEvent(toPos).isFixedTime()) {
+            notifyMoved(fromPos, toPos);
+        } else {
+            notifyMoved(fromPos, toPos, true);
+        }
         return mEventHandler.move(fromPos, toPos);
     }
 
 
     public void replaceEvent(int pos, boolean recycle) {
         mEventHandler.replaceEvent(pos, recycle);
+        // FIXME: 2016-02-08 Need to have a method that controls my freetimes and tells when they removes and appear.
+        notifyItemRemoved(pos - 1);
+        notifyItemRemoved(pos);
+        notifyItemRangeChanged(pos, 2);
+        notifyFreeTimesChanged();
+
 
     }
 
+    public void notifyFreeTimesChanged() {
+        ArrayList<Event> events = mEventHandler.getEvents();
+        for (int i = 3; i < events.size(); i+=2) {
+            if (events.get(i).isFreeTime()) {
+                notifyItemChanged(i);
+            }
+        }
+        for (int i = 2; i < events.size(); i+=2) {
+            notifyItemChanged(i);
+        }
+    }
+
     public void updateNight(int totalPixelMinutes) {
-        mEventHandler.updateNight(totalPixelMinutes);
+        mEventHandler.updateNight(totalPixelMinutes, getItemCount()-1, getItemCount());
+        notifyDataSetChanged();
     }
 
     public void updateMorning(int totalPixelMinutes) {
         mEventHandler.updateMorning(totalPixelMinutes);
+        notifyDataSetChanged();
     }
 
 
@@ -160,6 +240,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     public void removeFreetime(int evenId, int pos) {
         mEventHandler.removeFreetime(evenId, pos);
+        notifyDataSetChanged();
     }
 
 
@@ -267,6 +348,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                     @Override
                     public void onClick(View v) {
                         mEventHandler.removeAndFillUp(position);
+                        notifyDataSetChanged();
                     }
                 });
             }
