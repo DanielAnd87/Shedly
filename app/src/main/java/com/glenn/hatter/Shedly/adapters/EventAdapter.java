@@ -3,7 +3,6 @@ package com.glenn.hatter.Shedly.adapters;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,8 @@ import com.glenn.hatter.Shedly.constants.Constants;
 import com.glenn.hatter.Shedly.data.db.EventDataSource;
 import com.glenn.hatter.Shedly.interfaces.Communicator;
 import com.glenn.hatter.Shedly.model.EventHandler;
-import com.glenn.hatter.Shedly.ui.MainActivity;
+import com.glenn.hatter.Shedly.model.SortEventFromDb;
+import com.glenn.hatter.Shedly.model.scheduleDay;
 import com.glenn.hatter.Shedly.R;
 import com.glenn.hatter.Shedly.data.Event;
 import com.glenn.hatter.Shedly.model.ConvertToTime;
@@ -30,28 +30,51 @@ import java.util.List;
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHolder> {
 
 
-    private final EventHandler mEventHandler;
+    private EventHandler mEventHandler;
+    private SortEventFromDb mSortEventFromDb;
+    private scheduleDay mScheduleDay;
 
     private Context mContext;
 
     private Communicator mCommunicator;
     private int mNumberOfFreetimes;
+    private EventDataSource mDatasource;
+    private int mNeededDur;
 
     public void setCommunicator(Communicator communicator) {
         mCommunicator = communicator;
     }
 
-    private int mNeededDur = 0;
-
     public EventAdapter(Context context, List<Event> list, EventDataSource datasource) {
         mContext = context;
-        EventAdapter adapterContext = this;
+        mDatasource = datasource;
         mNumberOfFreetimes = 0;
-        mEventHandler = new EventHandler(context, datasource, Calendar.getInstance(), (ArrayList<Event>) list);
+        // Getting my events from the database and sort them into different lists.
+        startDay((ArrayList<Event>) list, Calendar.getInstance());
+
     }
 
-    public void createDay(List<Event> list) {
-        mEventHandler.createDay(list);
+    public void startDay(ArrayList<Event> list, Calendar calendar) {
+        mSortEventFromDb = new SortEventFromDb(mContext, mDatasource, calendar);
+
+        ArrayList<Event> events = mSortEventFromDb.sort(list);
+
+        if (events.size() > 0) {
+            mSortEventFromDb.changeStartTime(events);
+            // I'm scheduling the day such that the user get an allready finiched plan for their day.
+            // // FIXME: 2016-02-09 I will probobly need the info from the other lists in the ScheduleDay class
+            mScheduleDay = new scheduleDay(events);
+        } else {
+            mScheduleDay = new scheduleDay(mSortEventFromDb.getRemovedEvents());
+        }
+
+
+        mEventHandler = new EventHandler(mContext, Calendar.getInstance(), mScheduleDay.getEvent(), mScheduleDay.getReplaceList(), mScheduleDay.getRemovedEvents(), mScheduleDay.getBinedFixedEvents());
+    }
+
+    // FIXME: 2016-02-09 redo the jobb in the constructor.
+    public void createDay(List<Event> list, Calendar calendar) {
+        startDay((ArrayList<Event>) list, calendar);
     }
 
     @Override
@@ -225,7 +248,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     }
 
     public void saveDate() {
-        mEventHandler.saveDate();
+        mEventHandler.saveDate(mDatasource);
     }
 
 
@@ -300,7 +323,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                     itemView.setMinimumHeight(duration);
                     mEventLabel.setText(nameText);
                 }
-                Event currentEvent = mEventHandler.getEvents().get(getAdapterPosition());
+                Event currentEvent = mEventHandler.getEvents().get(getLayoutPosition());
                 if (mEventHandler.getEvents().get(position).isFixedTime()) {
                     itemView.setBackgroundColor(currentEvent.getColor());
                 } else {

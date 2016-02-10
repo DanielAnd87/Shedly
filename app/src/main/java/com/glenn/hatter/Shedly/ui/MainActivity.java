@@ -337,11 +337,12 @@ public class MainActivity extends Activity implements Communicator {
         mCalendar = calendar;
         // Filling up eventsFromDb with saved events from my database.
         ArrayList<Event> eventFromDb = mDatasource.read();
+        // TODO: 2016-02-10 Wasting performance when I dos'nt check for a saved day.
         // Initilazing the SortEvent class with my new ArrayList.
         SortEvent sortEvents = new SortEvent(calendar, eventFromDb);
         // Using the result in my adapter.
         adapter.setCalendar(calendar);
-        adapter.createDay(sortEvents.getEvents());
+        adapter.startDay(sortEvents.getEvents(), calendar);
         adapter.notifyDataSetChanged();
         mDateText.setText(setDate(calendar));
     }
