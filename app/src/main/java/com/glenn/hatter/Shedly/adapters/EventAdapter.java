@@ -69,7 +69,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         }
 
 
-        mEventHandler = new EventHandler(mContext, Calendar.getInstance(), mScheduleDay.getEvent(), mScheduleDay.getReplaceList(), mScheduleDay.getRemovedEvents(), mScheduleDay.getBinedFixedEvents());
+        EventAdapter mAdapterContext = this;
+        mEventHandler = new EventHandler(mContext, Calendar.getInstance(), mAdapterContext, mScheduleDay.getEvent(), mScheduleDay.getReplaceList(), mScheduleDay.getRemovedEvents(), mScheduleDay.getBinedFixedEvents());
     }
 
     // FIXME: 2016-02-09 redo the jobb in the constructor.
@@ -198,12 +199,14 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             Toast.makeText(mContext, R.string.exuse_when_moving_fixedtime, Toast.LENGTH_SHORT).show();
             return false;
         }
+        /*
         // If not a freeTime, as it ususally is'nt, then notify that two event has moved.
         if (!mEventHandler.getEvent(toPos).isFixedTime()) {
             notifyMoved(fromPos, toPos);
         } else {
             notifyMoved(fromPos, toPos, true);
         }
+        */
         return mEventHandler.move(fromPos, toPos);
     }
 
@@ -211,14 +214,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public void replaceEvent(int pos, boolean recycle) {
         mEventHandler.replaceEvent(pos, recycle);
         // FIXME: 2016-02-08 Need to have a method that controls my freetimes and tells when they removes and appear.
+        /*
         notifyItemRemoved(pos - 1);
         notifyItemRemoved(pos);
         notifyItemRangeChanged(pos, 2);
         notifyFreeTimesChanged();
-
+*/
 
     }
-
+/*
     public void notifyFreeTimesChanged() {
         ArrayList<Event> events = mEventHandler.getEvents();
         for (int i = 3; i < events.size(); i+=2) {
@@ -230,15 +234,13 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             notifyItemChanged(i);
         }
     }
-
+*/
     public void updateNight(int totalPixelMinutes) {
-        mEventHandler.updateNight(totalPixelMinutes, getItemCount()-1, getItemCount());
-        notifyDataSetChanged();
+        mEventHandler.updateNight(totalPixelMinutes);
     }
 
     public void updateMorning(int totalPixelMinutes) {
         mEventHandler.updateMorning(totalPixelMinutes);
-        notifyDataSetChanged();
     }
 
 
@@ -263,7 +265,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     public void removeFreetime(int evenId, int pos) {
         mEventHandler.removeFreetime(evenId, pos);
-        notifyDataSetChanged();
     }
 
 
