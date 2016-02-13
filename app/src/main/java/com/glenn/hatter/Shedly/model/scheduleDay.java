@@ -240,4 +240,6 @@ public class scheduleDay {
     public ArrayList<Event> getBinedFixedEvents() {
         return mBinedFixedEvents;
     }
+
+
 }

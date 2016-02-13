@@ -217,6 +217,7 @@ public class EventDataSource {
             }
         });
 
+        // Setting the duration for all events.
         int duration = 0;
         for (int i = 0; i < noteEvents.size(); i++) {
             Event noteEvent = noteEvents.get(i);
@@ -230,7 +231,7 @@ public class EventDataSource {
 
         if (noteEvents.size() == 0) {
             // If I did'nt find any then I return the empty list.
-            Log.i(TAG, "readNote Didn't find no Event :( aka sad nigga!");
+            Log.i(TAG, "readNote Didn't find no Event!");
             return noteEvents;
         }
         return noteEvents;
@@ -305,22 +306,22 @@ public class EventDataSource {
         SQLiteDatabase database = open();
         database.beginTransaction();
         int numNotes = 0;
+        ContentValues noteValues = new ContentValues();
         for (int i = 0; i < list.size(); i++) {
-            ContentValues noteValues = new ContentValues();
 
             noteValues.put(EventSQLiteHelper.COLUMN_NOTE_DATE, noteDate);
             noteValues.put(EventSQLiteHelper.COLUMN_NOTE_TIME, list.get(i).getTime());
             noteValues.put(EventSQLiteHelper.COLUMN_NOTE_KEY, list.get(i).getId());
-            noteValues.put(EventSQLiteHelper.COLUMN_EVENT_COLOR, list.get(i).getColor());
+           // noteValues.put(EventSQLiteHelper.COLUMN_EVENT_COLOR, list.get(i).getColor());
             numNotes = (int) database.insert(EventSQLiteHelper.NOTE_TABLE, null, noteValues);
 
             Log.i(TAG, "saveDate Put the date of " + noteDate + " the time of " + list.get(i).getTime() + " and id of " + list.get(i).getId());
         }
         for (Event event : replaceList) {
-            ContentValues noteValues = new ContentValues();
-
             noteValues.put(EventSQLiteHelper.COLUMN_NOTE_DATE, noteDate);
             noteValues.put(EventSQLiteHelper.COLUMN_NOTE_KEY, event.getId());
+            noteValues.put(EventSQLiteHelper.COLUMN_NOTE_TIME, 0);
+
 
             Log.i(TAG, "saveDate Put the date of " + noteDate + " the time of " + event.getTime() + " and id of " + event.getId());
 

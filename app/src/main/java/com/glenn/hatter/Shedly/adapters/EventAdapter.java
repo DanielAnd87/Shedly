@@ -50,27 +50,25 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         mDatasource = datasource;
         mNumberOfFreetimes = 0;
         // Getting my events from the database and sort them into different lists.
+        mSortEventFromDb = new SortEventFromDb(mContext, mDatasource);
         startDay((ArrayList<Event>) list, Calendar.getInstance());
-
     }
 
     public void startDay(ArrayList<Event> list, Calendar calendar) {
-        mSortEventFromDb = new SortEventFromDb(mContext, mDatasource, calendar);
+        mSortEventFromDb.setCalendar(calendar);
 
         ArrayList<Event> events = mSortEventFromDb.sort(list);
-
+        EventAdapter mAdapterContext = this;
         if (events.size() > 0) {
-            mSortEventFromDb.changeStartTime(events);
-            // I'm scheduling the day such that the user get an allready finiched plan for their day.
-            // // FIXME: 2016-02-09 I will probobly need the info from the other lists in the ScheduleDay class
-            mScheduleDay = new scheduleDay(events);
+            mEventHandler = new EventHandler(mContext, Calendar.getInstance(), mAdapterContext, events, mSortEventFromDb.getReplaceList(), mSortEventFromDb.getRemovedEvents(), mSortEventFromDb.getBinedFixedEvents());
         } else {
+            mSortEventFromDb.changeStartTime(events);
+            // I'm scheduling the day such that the user get an allready finished plan for their day.
             mScheduleDay = new scheduleDay(mSortEventFromDb.getRemovedEvents());
+            mEventHandler = new EventHandler(mContext, Calendar.getInstance(), mAdapterContext, mScheduleDay.getEvent(), mScheduleDay.getReplaceList(), mScheduleDay.getRemovedEvents(), mScheduleDay.getBinedFixedEvents());
         }
 
 
-        EventAdapter mAdapterContext = this;
-        mEventHandler = new EventHandler(mContext, Calendar.getInstance(), mAdapterContext, mScheduleDay.getEvent(), mScheduleDay.getReplaceList(), mScheduleDay.getRemovedEvents(), mScheduleDay.getBinedFixedEvents());
     }
 
     // FIXME: 2016-02-09 redo the jobb in the constructor.
