@@ -62,23 +62,6 @@
         android:layout_toLeftOf="@+id/calendar_fab"
         android:layout_toStartOf="@+id/calendar_fab"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/calendar_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="invisible"
-        fab:fab_title="Calendar"
-        android:onClick="showDatePickerDialog"
-        android:src="@drawable/ic_action_event_big"
-        fab:fab_colorNormal="#CDDC39"
-        fab:fab_colorPressed="#FFEB3B"
-        android:layout_marginLeft="20dp"
-        android:layout_marginStart="20dp"
-
-        android:layout_alignTop="@+id/new_event_fab"
-        android:layout_toLeftOf="@+id/new_event_fab"
-        android:layout_toStartOf="@+id/new_event_fab"/>
-
 
     <TextView
         android:layout_width="10dp"
@@ -88,6 +71,21 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/replan_fag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_colorNormal="#0288D1"
+        android:visibility="visible"
+        android:src="@drawable/ic_recharge"
+        fab:fab_colorPressed="#03A9F4"
+        android:layout_toLeftOf="@id/new_event_fab"
+        android:layout_alignTop="@+id/new_event_fab"
+
+
+        />
 
 
 </RelativeLayout>

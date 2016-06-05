@@ -8,6 +8,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -23,6 +24,7 @@ import com.glenn.hatter.Shedly.data.Event;
 import com.glenn.hatter.Shedly.data.db.EventDataSource;
 import com.glenn.hatter.Shedly.ui.fragments.DatePickerFragment;
 import com.glenn.hatter.Shedly.ui.fragments.EventQueneFragment;
+import com.glenn.hatter.Shedly.ui.fragments.FinishedEventQueryFragment;
 import com.glenn.hatter.Shedly.ui.fragments.NewEventFragment;
 import com.glenn.hatter.Shedly.interfaces.Communicator;
 import com.glenn.hatter.Shedly.model.ConvertToTime;
@@ -36,10 +38,12 @@ import java.util.Date;
 
 
 public class MainActivity extends Activity implements Communicator {
+    public static final String FRAGMENT_TAG = "new Event";
+
     private NewEventFragment mNewEventFragment;
     private EventQueneFragment mEventQueueFragment;
+    private FinishedEventQueryFragment mFinishedEventQueryFragment;
     private FragmentManager mFragmentManager;
-    public static final String FRAGMENT_TAG = "new Event";
     private EventDataSource mDatasource;
     private boolean mMorning;
     private Calendar mCalendar = Calendar.getInstance();
@@ -113,6 +117,21 @@ public class MainActivity extends Activity implements Communicator {
                 transaction.commit();
             }
         });
+
+        final android.support.design.widget.FloatingActionButton mReplanFab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.replan_fag);
+        mReplanFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                ArrayList<Parcelable> bundledEvents = new ArrayList<Parcelable>();
+                bundledEvents.addAll(adapter.getEvents());
+
+                bundle.putParcelableArrayList(Constants.PARCELD_EVENT, bundledEvents);
+                queryFinishedEvents(bundle);
+            }
+        });
+
+
 /*
         final FloatingActionButton mEventQueueFab = (FloatingActionButton) findViewById(R.id.event_queue_fab);
         mEventQueueFab.setOnClickListener(new View.OnClickListener() {
@@ -129,6 +148,7 @@ public class MainActivity extends Activity implements Communicator {
             }
         });
 */
+        /*
         final android.support.design.widget.FloatingActionButton mCalendarFab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.calendar_fab);
         mCalendarFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,6 +171,7 @@ public class MainActivity extends Activity implements Communicator {
 
             }
         });
+        */
 
         // This is where Drag&Drop and swipe to remove occurs
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -342,6 +363,8 @@ public class MainActivity extends Activity implements Communicator {
         SortEvent sortEvents = new SortEvent(calendar, eventFromDb);
         // Using the result in my adapter.
         adapter.setCalendar(calendar);
+        // Clearing all lists to avoid dubbel posts.
+        adapter.clearAllLists();
         adapter.startDay(sortEvents.getEvents(), calendar);
         adapter.notifyDataSetChanged();
         mDateText.setText(setDate(calendar));
@@ -384,6 +407,39 @@ public class MainActivity extends Activity implements Communicator {
         adapter.resetEvents();
     }
 
+    @Override
+    public void queryFinishedEvents(Bundle bundle) {
+        mFragmentManager = getFragmentManager();
+        mFinishedEventQueryFragment = new FinishedEventQueryFragment();
+        mFinishedEventQueryFragment.setArguments(bundle);
+        FragmentTransaction transaction = mFragmentManager.beginTransaction();
+        transaction.add(R.id.main_layout, mFinishedEventQueryFragment, FRAGMENT_TAG);
+        transaction.addToBackStack(Constants.BACKSTACK_QUERY);
+        transaction.commit();
+    }
+
+    @Override
+    public void respondToQuery(ArrayList<Integer> idsToRemove, ArrayList<Integer> idsToBin) {
+        for (Integer integer : idsToRemove) {
+            int pos = adapter.getPositionFromId(integer);
+
+            adapter.replaceEvent(pos, false);
+        }
+        for (Integer integer : idsToBin) {
+            /*
+            int pos = adapter.getPositionFromId(integer);
+            if (pos != -1) {
+                adapter.replaceEvent(pos, false);
+            }
+            */
+            adapter.removeEvent(integer);
+            mDatasource.delete(integer);
+
+        }
+        mMorning = true;
+        updateMorningAndNightTime();
+    }
+
 
     @Override
     public void respond(Event event, boolean brandNew, int dataPos) {
@@ -422,6 +478,16 @@ public class MainActivity extends Activity implements Communicator {
         }
         if (fractionTag.equals(Constants.QUEUE_FRACTION)) {
             EventQueneFragment eventFragment = (EventQueneFragment) mFragmentManager.findFragmentByTag(FRAGMENT_TAG);
+            FragmentTransaction transaction = mFragmentManager.beginTransaction();
+            if (eventFragment != null) {
+                transaction.remove(eventFragment);
+                transaction.commit();
+            } else {
+                Toast.makeText(this, "The Fragment was not added before", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if (fractionTag.equals(Constants.BACKSTACK_QUERY)) {
+            FinishedEventQueryFragment eventFragment = (FinishedEventQueryFragment) mFragmentManager.findFragmentByTag(FRAGMENT_TAG);
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             if (eventFragment != null) {
                 transaction.remove(eventFragment);

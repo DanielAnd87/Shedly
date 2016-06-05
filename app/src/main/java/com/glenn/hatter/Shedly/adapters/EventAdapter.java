@@ -2,6 +2,7 @@ package com.glenn.hatter.Shedly.adapters;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     private SortEventFromDb mSortEventFromDb;
     private scheduleDay mScheduleDay;
 
+
     private Context mContext;
 
     private Communicator mCommunicator;
@@ -49,6 +51,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         mContext = context;
         mDatasource = datasource;
         mNumberOfFreetimes = 0;
+        mCommunicator = (Communicator) mContext;
         // Getting my events from the database and sort them into different lists.
         mSortEventFromDb = new SortEventFromDb(mContext, mDatasource);
         startDay((ArrayList<Event>) list, Calendar.getInstance());
@@ -57,14 +60,28 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
     public void startDay(ArrayList<Event> list, Calendar calendar) {
         mSortEventFromDb.setCalendar(calendar);
 
+
         ArrayList<Event> events = mSortEventFromDb.sort(list);
         EventAdapter mAdapterContext = this;
         if (events.size() > 0) {
             mEventHandler = new EventHandler(mContext, Calendar.getInstance(), mAdapterContext, events, mSortEventFromDb.getReplaceList(), mSortEventFromDb.getRemovedEvents(), mSortEventFromDb.getBinedFixedEvents());
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(Constants.PARCELD_EVENT, events);
+
+            mCommunicator.queryFinishedEvents(bundle);
         } else {
-            mSortEventFromDb.changeStartTime(events);
-            // I'm scheduling the day such that the user get an allready finished plan for their day.
-            mScheduleDay = new scheduleDay(mSortEventFromDb.getRemovedEvents());
+            ArrayList<Event> removedEvents = mSortEventFromDb.getRemovedEvents();
+            mSortEventFromDb.changeStartTime(removedEvents);
+            // I'm scheduling the day such that the user get an already finished plan for their day.
+            // TODO: 2016-05-31 I experimenting with removing doubles before I insert them in ScheduleDay object, MIGHT BREAK OTHER CODE!
+            for (int i = 0; i < removedEvents.size(); i++) {
+                for (int i1 = i+1; i1 < removedEvents.size(); i1++) {
+                    if (removedEvents.get(i).getId() == removedEvents.get(i1).getId()) {
+                        removedEvents.remove(i1);
+                    }
+                }
+            }
+            mScheduleDay = new scheduleDay(removedEvents);
             mEventHandler = new EventHandler(mContext, Calendar.getInstance(), mAdapterContext, mScheduleDay.getEvent(), mScheduleDay.getReplaceList(), mScheduleDay.getRemovedEvents(), mScheduleDay.getBinedFixedEvents());
         }
 
@@ -279,7 +296,18 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         mEventHandler.resetEvents();
     }
 
+    public int getPositionFromId(Integer integer) {
+        return mEventHandler.getPositionFromId(integer);
+    }
 
+    public ArrayList<? extends Parcelable> getEvents() {
+        return mEventHandler.getEvents();
+    }
+
+    public void clearAllLists() {
+
+        mEventHandler.clearAllLists();
+    }
 
 
     public class EventViewHolder extends RecyclerView.ViewHolder
@@ -384,7 +412,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             Event chosen = mEventHandler.getEvents().get(getLayoutPosition());
 
                 //choseEventsToReplace(getLayoutPosition());
-                mCommunicator = (Communicator) mContext;
 
                 if (getItemViewType() == 1) {
                     if (mEventHandler.getEvents().get(getLayoutPosition()).isFreeTime()) {
@@ -413,6 +440,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
 
                         mNeededDur = chosen.getDuration();
+
+                        //bundle.putParcelable(Constants.PARCELD_EVENT, chosen);
 
                         mCommunicator.startNewEventFragment(bundle);
 

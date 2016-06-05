@@ -34,18 +34,6 @@
         />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/new_event_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        fab:fab_title="New event"
-        android:src="@drawable/ic_content_add_big"
-        fab:fab_colorNormal="#388E3C"
-        fab:fab_colorPressed="#4CAF50"
-        android:layout_centerHorizontal="true"
-        android:layout_alignBottom="@+id/eventbin_fab"
-        />
-
-    <android.support.design.widget.FloatingActionButton
         android:id="@+id/calendar_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,6 +67,31 @@
         android:layout_height="5dp"
         android:id="@+id/textView"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/replan_fag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_colorNormal="#0288D1"
+        android:visibility="visible"
+        android:src="@drawable/ic_recharge"
+        fab:fab_colorPressed="#03A9F4"
+        android:layout_toLeftOf="@id/new_event_fab"
+        android:layout_alignTop="@+id/new_event_fab"
+        />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/new_event_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        fab:fab_title="New event"
+        android:layout_margin="5dp"
+        android:src="@drawable/ic_content_add_big"
+        fab:fab_colorNormal="#388E3C"
+        fab:fab_colorPressed="#4CAF50"
+        android:layout_alignBottom="@+id/textView"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 

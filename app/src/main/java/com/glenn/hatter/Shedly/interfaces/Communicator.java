@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.glenn.hatter.Shedly.data.Event;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -23,4 +24,8 @@ public interface Communicator {
     public void deleteEvent(int eventId);
 
     public void restoreRemovedEvents(int pos, boolean ordinary);
+
+    public void queryFinishedEvents(Bundle bundle);
+
+    public void respondToQuery(ArrayList<Integer> checkBoxes, ArrayList<Integer> idsToBin);
 }

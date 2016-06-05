@@ -91,8 +91,8 @@ public class EventChoosingActivity extends Activity {
                                 2 * Constants.HOUR,
                                 22 * Constants.HOUR)
                 };
-                startAndStop[0].setId(1);
-                startAndStop[1].setId(2);
+                startAndStop[0].setId(Constants.MORNING_ID);
+                startAndStop[1].setId(Constants.NIGHT_ID);
                 for (Event event : startAndStop) {
                     mDataSource.create(event);
                 }

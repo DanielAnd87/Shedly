@@ -33,4 +33,10 @@ public class Constants {
     public static final String QUEUE_FRACTION = "event quene";
     public static final String FREETIME_DURATION = "FREETIME DURATION";
     public static final String FOURTH_WEEK = "FOURTH WEEK";
+    public static final String PARCELD_EVENT = "PARCELD EVENT";
+
+    // Backstack tags
+    public static final String BACKSTACK_QUERY = "FINISHED QUERYS";
+    public static int NIGHT_ID = 2;
+    public static int MORNING_ID = 1;
 }

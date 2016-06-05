@@ -8,7 +8,7 @@
 
     <string name="freetime_text">Fritid, tryck för att hitta dina event!</string>
     <string name="default_time_label">--:--</string>
-    <string name="freetime_label">Fritid</string>
+    <string name="freetime_label"></string>
     <string name="night_greeting_label">Good natt!</string>
     <string name="morning_greeting_label">Good morgon</string>
     <string name="eventing_greeting_label">Middag</string>
@@ -63,6 +63,11 @@
     <string name="new_event_fragmet_frequensy_weekdays">Vardagar</string>
     <string name="new_event_fragmet_frequensy_weekends">Helger</string>
     <string name="new_event_fragmet_frequensy_fourht_week">Var fjärde vecka</string>
+    <string name="minutes_over_label">Minuter över shemat:</string>
+    <string name="minutes_free_label">Minuter fria:</string>
+    <string name="query_top_label">Omplanering</string>
+    <string name="query_bottom_label">Bocka av det du är klar med.</string>
+
 
 
 </resources>

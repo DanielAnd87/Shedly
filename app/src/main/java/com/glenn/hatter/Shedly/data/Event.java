@@ -1,6 +1,8 @@
 package com.glenn.hatter.Shedly.data;
 
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -8,7 +10,7 @@ import java.util.Date;
 /**
  * Created by hatter on 2015-06-01.
  */
-public class Event {
+public class Event implements Parcelable{
     private int mId = -1;
 
     private String mName;
@@ -23,6 +25,34 @@ public class Event {
     private boolean mInSelectedArea;
     private String mRecurring;
     private long mStartTimeStamp;
+
+    protected Event(Parcel in) {
+        mId = in.readInt();
+        mName = in.readString();
+        mDuration = in.readInt();
+        mTime = in.readInt();
+        mChosenToBeRemoved = in.readByte() != 0;
+        mColor = in.readInt();
+        mFixedTime = in.readInt();
+        mTravelDurationTo = in.readInt();
+        mTravelDurationFrom = in.readInt();
+        mFreeTime = in.readByte() != 0;
+        mInSelectedArea = in.readByte() != 0;
+        mRecurring = in.readString();
+        mStartTimeStamp = in.readLong();
+    }
+
+    public static final Creator<Event> CREATOR = new Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel in) {
+            return new Event(in);
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
 
     public int getTravelDurationTo() {
 
@@ -209,4 +239,28 @@ public class Event {
         long timeStamp = date.getTime()/1000;
         mStartTimeStamp = timeStamp;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeInt(mId);
+        dest.writeString(mName);
+        dest.writeInt(mDuration);
+        dest.writeInt(mTime);
+        dest.writeByte((byte) (mChosenToBeRemoved ? 1 : 0));
+        dest.writeInt(mColor);
+        dest.writeInt(mFixedTime);
+        dest.writeInt(mTravelDurationTo);
+        dest.writeInt(mTravelDurationFrom);
+        dest.writeByte((byte) (mFreeTime ? 1 : 0));
+        dest.writeByte((byte) (mInSelectedArea ? 1 : 0));
+        dest.writeString(mRecurring);
+        dest.writeLong(mStartTimeStamp);
+    }
+
 }
