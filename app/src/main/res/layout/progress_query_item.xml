@@ -3,7 +3,10 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:orientation="horizontal"
                 android:alpha="0.8"
-                android:layout_marginTop="3dp"
+                android:background="@color/colorYellow"
+                android:id="@+id/query_layout"
+                android:paddingTop="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -15,7 +18,7 @@
         android:alpha="1"
 
         android:id="@+id/query_row_textview"
-        android:textColor="#545454"
+        android:textColor="#ffffff"
         android:textSize="17sp"
         android:layout_gravity="center_vertical"
         android:layout_centerVertical="true"
@@ -38,15 +41,4 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"/>
 
-    <CheckBox
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/query_item_checkbox"
-        android:alpha="1"
-        android:layout_gravity="center_vertical"
-        android:checked="false"
-
-        android:layout_alignTop="@+id/query_item_binedbox"
-        android:layout_toLeftOf="@+id/query_item_binedbox"
-        android:layout_toStartOf="@+id/query_item_binedbox"/>
 </RelativeLayout>

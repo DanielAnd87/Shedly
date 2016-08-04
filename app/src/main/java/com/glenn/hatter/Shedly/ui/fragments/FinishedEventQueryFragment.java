@@ -104,7 +104,7 @@ public class FinishedEventQueryFragment extends Fragment implements View.OnClick
         //Collections.addAll(mEvents, events);
         //mQueryHandler = new QueryHandler(mEvents);
 
-        adapter = new EventQueryAdapter(mEvents, new boolean[mEvents.size()], currentTime);
+        adapter = new EventQueryAdapter(mEvents, new boolean[mEvents.size()], currentTime, getActivity());
         eventRecyclerView.setAdapter(adapter);
         eventRecyclerView.setHasFixedSize(false);
         eventRecyclerView.setLayoutManager(layoutManager);

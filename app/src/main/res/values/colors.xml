@@ -10,6 +10,11 @@
     <color name="blue_semi_transparent">#805677fc</color>
     <color name="blue_semi_transparent_pressed">#80738ffe</color>
 
+    <color name="colorGreen">#14d659</color>
+    <color name="colorYellow">#F4B607</color>
+    <color name="colorRed">#d10d38</color>
+    <color name="colorLightPrimary">#58afd6</color>
+
     <color name="colorPrimary">#03A9F4</color>
     <color name="colorPrimaryDark">#0288D1</color>
     <color name="colorAccent">#448AFF</color>

@@ -1,6 +1,8 @@
 package com.glenn.hatter.Shedly.adapters;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.glenn.hatter.Shedly.R;
@@ -28,14 +31,16 @@ public class EventQueryAdapter extends RecyclerView.Adapter<EventQueryAdapter.St
     }
 
     private final boolean[] mBinedBooleans;
+    private Context mContext;
     private ArrayList<Event> mEvents;
     private int mTime;
 
-    public EventQueryAdapter(ArrayList<Event> events, boolean[] checkBoxes, int time) {
+    public EventQueryAdapter(ArrayList<Event> events, boolean[] checkBoxes, int time, Context context) {
         mEvents = events;
         mCheckBoxes = checkBoxes;
         mTime = time;
         mBinedBooleans = new boolean[checkBoxes.length];
+        mContext = context;
     }
 
     public ArrayList<Event> getChosenEvents() {
@@ -59,29 +64,37 @@ public class EventQueryAdapter extends RecyclerView.Adapter<EventQueryAdapter.St
         final Event current = mEvents.get(position);
         String name = current.getName() + "";
         holder.queryItemLabel.setText(name);
-        holder.startEventCheckbox.setChecked(mCheckBoxes[position]);
 
-        holder.startEventCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mCheckBoxes[position] = isChecked;
-            }
-        });
+        if (mCheckBoxes[position]) {
+            int color = ContextCompat.getColor(mContext, R.color.colorGreen);
+            holder.mLayout.setBackgroundColor(color);
+        } else {
+            int colorYellow = R.color.colorYellow;
+            int color = ContextCompat.getColor(mContext, colorYellow);
+            holder.mLayout.setBackgroundColor(color);
+        }
+
+        if (mBinedBooleans[position]) {
+            int color = ContextCompat.getColor(mContext, R.color.colorRed);
+            holder.mLayout.setBackgroundColor(color);
+        }
+
+
         holder.binedEvents.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Checking the checkbox if the event is deleted.
                 if (!mBinedBooleans[position]) {
-                    holder.startEventCheckbox.setChecked(true);
                     mBinedBooleans[position] = true;
                     // Setting normal color.
-                    holder.binedEvents.setColorFilter(Color.parseColor("#FFD6181F"));
+               //     holder.binedEvents.setColorFilter(Color.parseColor("#FFD6181F"));
                 } else {
                     mBinedBooleans[position] = false;
                     // Setting red color
-                    holder.binedEvents.setColorFilter(Color.parseColor("#727272"));
+                 //   holder.binedEvents.setColorFilter(Color.parseColor("#727272"));
 
                 }
+                notifyItemChanged(position);
             }
         });
     }
@@ -118,16 +131,41 @@ public class EventQueryAdapter extends RecyclerView.Adapter<EventQueryAdapter.St
         return freeDuration;
     }
 
-    public class StartEventsHolder extends RecyclerView.ViewHolder{
-        public TextView queryItemLabel;
-        public CheckBox startEventCheckbox;
-        public ImageButton binedEvents;
+    public class StartEventsHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        private TextView queryItemLabel;
+        private ImageButton binedEvents;
+        private RelativeLayout mLayout;
 
         public StartEventsHolder(View itemView) {
             super(itemView);
             queryItemLabel = (TextView) itemView.findViewById(R.id.query_row_textview);
-            startEventCheckbox = (CheckBox) itemView.findViewById(R.id.query_item_checkbox);
             binedEvents = (ImageButton) itemView.findViewById(R.id.query_item_binedbox);
+            mLayout = (RelativeLayout) itemView.findViewById(R.id.query_layout);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+
+            if (mCheckBoxes[getAdapterPosition()]) {
+                int color = ContextCompat.getColor(mContext, R.color.colorGreen);
+                mLayout.setBackgroundColor(color);
+            } else {
+                int colorYellow = R.color.colorYellow;
+                int color = ContextCompat.getColor(mContext, colorYellow);
+                mLayout.setBackgroundColor(color);
+            }
+            mCheckBoxes[getAdapterPosition()] = !mCheckBoxes[getAdapterPosition()];
+
+            if (mBinedBooleans[getAdapterPosition()]) {
+                int color = ContextCompat.getColor(mContext, R.color.colorRed);
+                mLayout.setBackgroundColor(color);
+                mCheckBoxes[getAdapterPosition()] = false;
+
+            }
+
+            notifyItemChanged(getAdapterPosition());
+        }
+
     }
 }

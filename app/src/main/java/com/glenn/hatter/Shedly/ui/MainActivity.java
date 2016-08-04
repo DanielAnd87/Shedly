@@ -1,5 +1,7 @@
 package com.glenn.hatter.Shedly.ui;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
@@ -82,7 +84,7 @@ public class MainActivity extends Activity implements Communicator {
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         mDateText = (TextView) findViewById(R.id.date_label);
-        mDateText.setText(setDate(mCalendar));
+         mDateText.setText(setDate(mCalendar));
         mDateText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -467,7 +469,10 @@ public class MainActivity extends Activity implements Communicator {
     @Override
     public void removeFraktion(String fractionTag) {
         if (fractionTag.equals("new Event")) {
+
+
             NewEventFragment eventFragment = (NewEventFragment) mFragmentManager.findFragmentByTag(FRAGMENT_TAG);
+
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
             if (eventFragment != null) {
                 transaction.remove(eventFragment);

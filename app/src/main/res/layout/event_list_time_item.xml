@@ -17,12 +17,16 @@
         tools:text="Hamstehjul"
         android:id="@+id/event_text"
         android:textSize="22sp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="20dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:textColor="#607D8B"
-        android:layout_gravity="right"/>
+        android:layout_gravity="right"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="2dp"
+
+        />
 
 
 

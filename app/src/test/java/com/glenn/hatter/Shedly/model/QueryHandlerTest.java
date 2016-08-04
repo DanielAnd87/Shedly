@@ -16,10 +16,10 @@ import static org.junit.Assert.*;
  * Created by hatter on 2016-02-24.
  */
 public class QueryHandlerTest {
+    private QueryHandler mQueryHandler;
     private DayBook daybook;
     ArrayList<Event> mScheckpoints;
     boolean[] checkedBoxes = {true, true, true, true, true, false};
-    private QueryHandler mQueryHandler;
     private boolean[] checkedBoxes2 = {true, true, false, true, true, false};
 
     @Before

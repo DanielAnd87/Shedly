@@ -16,7 +16,7 @@ import com.glenn.hatter.Shedly.data.db.EventDataSource;
 import com.glenn.hatter.Shedly.interfaces.Communicator;
 import com.glenn.hatter.Shedly.model.EventHandler;
 import com.glenn.hatter.Shedly.model.SortEventFromDb;
-import com.glenn.hatter.Shedly.model.scheduleDay;
+import com.glenn.hatter.Shedly.model.ScheduleDay;
 import com.glenn.hatter.Shedly.R;
 import com.glenn.hatter.Shedly.data.Event;
 import com.glenn.hatter.Shedly.model.ConvertToTime;
@@ -33,7 +33,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
 
     private EventHandler mEventHandler;
     private SortEventFromDb mSortEventFromDb;
-    private scheduleDay mScheduleDay;
+    private ScheduleDay mScheduleDay;
 
 
     private Context mContext;
@@ -81,7 +81,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
                     }
                 }
             }
-            mScheduleDay = new scheduleDay(removedEvents);
+            mScheduleDay = new ScheduleDay(removedEvents);
             mEventHandler = new EventHandler(mContext, Calendar.getInstance(), mAdapterContext, mScheduleDay.getEvent(), mScheduleDay.getReplaceList(), mScheduleDay.getRemovedEvents(), mScheduleDay.getBinedFixedEvents());
         }
 

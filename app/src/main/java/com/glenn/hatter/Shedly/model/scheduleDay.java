@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by hatter on 2016-02-09.
  */
-public class scheduleDay {
+public class ScheduleDay {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -27,7 +27,7 @@ public class scheduleDay {
     private ArrayList<Event> mOrdinaryEventQueue = new ArrayList<>();
     private ArrayList<Event> mBinedFixedEvents = new ArrayList<>();
 
-    public scheduleDay(ArrayList<Event> event) {
+    public ScheduleDay(ArrayList<Event> event) {
         // TODO: 2016-02-10 initiate all fields here
         update(event);
     }
@@ -91,11 +91,17 @@ public class scheduleDay {
             int currentEndTime = current.getFixedTime() + current.getDuration();
 
 
-
             if (currentEndTime > after.getFixedTime()) {
                 if (i != mReplaceList.size() - 2) {
-                    mBinedFixedEvents.add(current);
-                    mReplaceList.remove(current);
+                    // Only removes it if its no the morning. (I kinda need the morning!!!)
+                    if (current.getId() != Constants.MORNING_ID) {
+
+                        mBinedFixedEvents.add(current);
+                        mReplaceList.remove(current);
+                    } else {
+                        mBinedFixedEvents.add(after);
+                        mReplaceList.remove(after);
+                    }
                     i--;
                 } else {
                     int fixedTime = currentEndTime + (5 * Constants.MINUTE);
