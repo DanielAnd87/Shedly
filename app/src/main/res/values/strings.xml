@@ -47,7 +47,7 @@
     <string name="start_event_cleanup">Clean-up</string>
     <string name="start_event_morning_hygiene">Morning hygiene</string>
     <string name="quene_type_label">Events</string>
-    <string name="quene_type_label_fixed">Fixed Events</string>
+    <string name="quene_type_label_fixed">Fixed Time</string>
     <string name="new_event_repeate_label">Repete</string>
     <string name="cancel_label">CANCEL</string>
     <string name="new_event_frequency_query">Choose frequency</string>

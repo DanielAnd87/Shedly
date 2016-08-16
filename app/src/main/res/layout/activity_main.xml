@@ -5,7 +5,6 @@
                 android:layout_width="wrap_content"
                 android:id="@+id/main_layout"
                 android:layout_height="match_parent"
-                tools:context=".ConjActivity"
 
     >
 
@@ -78,7 +77,8 @@
         android:layout_height="wrap_content"
         fab:fab_colorNormal="#0288D1"
         android:visibility="visible"
-        android:src="@drawable/ic_recharge"
+        android:tint="@color/white"
+        android:src="@drawable/ic_repeat_icon"
         fab:fab_colorPressed="#03A9F4"
         android:layout_toLeftOf="@id/new_event_fab"
         android:layout_alignTop="@+id/new_event_fab"
@@ -95,7 +95,9 @@
         fab:fab_colorPressed="#4CAF50"
         android:layout_alignBottom="@+id/textView"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+
+        />
 
 
 </RelativeLayout>

@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -35,6 +33,7 @@ import com.glenn.hatter.Shedly.constants.Constants;
 import com.glenn.hatter.Shedly.interfaces.Communicator;
 import com.glenn.hatter.Shedly.R;
 import com.glenn.hatter.Shedly.data.Event;
+import com.glenn.hatter.Shedly.model.CollapseView;
 import com.glenn.hatter.Shedly.model.ConvertToTime;
 
 import java.text.DateFormat;
@@ -46,7 +45,6 @@ import java.util.Date;
  */
 public class NewEventFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     private Communicator mCommunicator;
-    private RecyclerView mColorRecycler;
     private ColorRowAdaper mColorRowAdaper;
     private EditText mName;
     private int mEventPos;
@@ -84,6 +82,8 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
     };
     private ArrayAdapter<String> mFrekvensyAdapter;
     private String mEventFrekvensy;
+    private CollapseView[] mCollapseViews;
+    private boolean mChangingStarTime = true;
 
 
     public void setCommunicator(Communicator communicator) {
@@ -104,19 +104,65 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.new_event_fragment, container, false);
+        View view = inflater.inflate(R.layout.expandable_new_event_layout, container, false);
+
 
         mMinutePicker = (NumberPicker) view.findViewById(R.id.numberPicker);
         mHourPicker = (NumberPicker) view.findViewById(R.id.hour_picker);
         mName = (EditText) view.findViewById(R.id.events_name_textfield);
         base = (RelativeLayout) view.findViewById(R.id.new_event_relativelayout);
         // Initiate color row
-        mColorRecycler = (RecyclerView) view.findViewById(R.id.color_recyclerView);
+        RecyclerView colorRecycler = (RecyclerView) view.findViewById(R.id.color_recyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity(), RecyclerView.HORIZONTAL, false);
         mColorRowAdaper = new ColorRowAdaper(getActivity());
-        mColorRecycler.setAdapter(mColorRowAdaper);
-        mColorRecycler.setLayoutManager(layoutManager);
+        colorRecycler.setAdapter(mColorRowAdaper);
+        colorRecycler.setLayoutManager(layoutManager);
 
+
+        // Testing to disapear things. MAGIC
+
+        int numLayouts = 5;
+        LinearLayout[] linearLayouts;
+        linearLayouts = new LinearLayout[numLayouts];
+        ImageButton[] imageButtons;
+        imageButtons = new ImageButton[numLayouts];
+        mCollapseViews = new CollapseView[numLayouts];
+        TextView[] textViews;
+        textViews = new TextView[numLayouts];
+
+        imageButtons[0] = (ImageButton) view.findViewById(R.id.new_event_imageButton_duration);
+        imageButtons[1] = (ImageButton) view.findViewById(R.id.new_event_imageButton_travel_time);
+        imageButtons[2] = (ImageButton) view.findViewById(R.id.new_event_imageButton_repeat);
+        imageButtons[3] = (ImageButton) view.findViewById(R.id.new_event_imageButton_fix_time);
+        imageButtons[4] = (ImageButton) view.findViewById(R.id.new_event_imageButton_color);
+
+        textViews[1] = (TextView) view.findViewById(R.id.duration_textfield);
+        textViews[0] = (TextView) view.findViewById(R.id.travel_textfield);
+        textViews[2] = (TextView) view.findViewById(R.id.repeat_textview);
+        textViews[3] = (TextView) view.findViewById(R.id.new_event_fix_time_textview);
+        textViews[4] = (TextView) view.findViewById(R.id.new_event_color_textview);
+
+
+        linearLayouts[0] = (LinearLayout) view.findViewById(R.id.duration_layout);
+        linearLayouts[1]= (LinearLayout) view.findViewById(R.id.travel_layout);
+        linearLayouts[2] = (LinearLayout) view.findViewById(R.id.new_event_repeat_layout);
+        linearLayouts[3] = (LinearLayout) view.findViewById(R.id.new_event_fix_time_layout);
+        linearLayouts[4]= (LinearLayout) view.findViewById(R.id.new_event_color_layout);
+
+        // initiating all CollapseViews with all LinearLayouts.
+        for (int i = 0; i < mCollapseViews.length; i++) {
+            mCollapseViews[i] = new CollapseView(linearLayouts[i]);
+        }
+
+        // Collapsing all views exept the first.
+        for (int i = 1; i < mCollapseViews.length; i++) {
+            mCollapseViews[i].collapse();
+        }
+            // Setting clickListernesr for all buttons
+        for (int i = 0; i < imageButtons.length; i++) {
+            toggleCollapseView(mCollapseViews[i], imageButtons[i]);
+            toggleCollapseView(mCollapseViews[i], textViews[i]);
+        }
 
         mCalendar = Calendar.getInstance();
         mTravelFromCheckbox = (CheckBox) view.findViewById(R.id.travel_from_checkbox);
@@ -124,6 +170,40 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
         mMinutePickerTravelTo = (NumberPicker) view.findViewById(R.id.numberPicker_travel_dur_to);
         mTravelToCheckbox = (CheckBox) view.findViewById(R.id.travel_to_checkbox);
         curtainView = (ImageView) view.findViewById(R.id.curtain_view);
+        final TimePickerDialog.OnTimeSetListener timeDialogStart = new TimePickerDialog.OnTimeSetListener() {
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    mCalendar.set(Calendar.MINUTE, minute);
+                    updateLabel();
+            }
+        };
+        final TimePickerDialog.OnTimeSetListener timeDialogStop = new TimePickerDialog.OnTimeSetListener() {
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    // // getting time from mCalender and subtract to get the duration. Then only update the StopLabel and the duration pickers.
+                    Date date = mCalendar.getTime();
+                    int durationHour = date.getHours();
+                    int durationMinute = date.getMinutes();
+
+                    durationHour = hourOfDay - durationHour;
+                    durationMinute = minute - durationMinute;
+                    if (durationMinute < 0) {
+                        durationHour--;
+                        durationMinute = 60 + durationMinute;
+                    }
+                    if (durationHour >= 0) {
+                        mHourPicker.setValue(durationHour);
+                        mMinutePicker.setValue(durationMinute);
+
+                        if (minute > 9) {
+                            stopTimeLabel.setText(hourOfDay + ":" + minute);
+                        } else {
+                            stopTimeLabel.setText(hourOfDay + ":" + "0" + minute);
+                        }
+                    }
+                }
+
+
+        };
         mTravelToCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -152,7 +232,6 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
 
         startTimeLabel = (TextView) view.findViewById(R.id.start_time_label);
         stopTimeLabel = (TextView) view.findViewById(R.id.stop_time_label);
-        // TODO: 2015-10-07 Instead of letting the user pick a start date, for when to start repeat, I instead send an timeStamp for this day and initatie the calendar with it.
         mHourPicker.setOnScrollListener(new NumberPicker.OnScrollListener() {
             @Override
             public void onScrollStateChange(NumberPicker view, int scrollState) {
@@ -163,53 +242,34 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
                 }
             }
         });
-        final TimePickerDialog.OnTimeSetListener timeDialog = new TimePickerDialog.OnTimeSetListener() {
-            public void onTimeSet(TimePicker view, int hourOfDay,
-                                  int minute) {
-                mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                mCalendar.set(Calendar.MINUTE, minute);
-                updateLabel();
-            }
-        };
 
         timeFormat = DateFormat.getTimeInstance();
 
-        startTimeLabel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mTimeSwith.setChecked(true);
-                /*
-                new TimePickerDialog(getActivity(),
-                        timeDialog,
-                        mCalendar.get(Calendar.HOUR_OF_DAY),
-                        mCalendar.get(Calendar.MINUTE),
-                        true).show();
-                        */
-            }
 
-        });
-
+        // When user press the time textViews.
+        setTimeLabelButtons(startTimeLabel, true, timeDialogStart);
+        setTimeLabelButtons(stopTimeLabel, false, timeDialogStop);
 
 
 
 
 
         mTimeSwith = (Switch) view.findViewById(R.id.time_switch);
-        mTimeSwith.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        mTimeSwith.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked && hasStarted) {
-                    mColorRowAdaper.setColor(1);
-                    new TimePickerDialog(getActivity(),
-                            timeDialog,
-                            mCalendar.get(Calendar.HOUR_OF_DAY),
-                            mCalendar.get(Calendar.MINUTE),
-                            true).show();
-                }else if (!isChecked && hasStarted) {
+            public void onClick(View view) {
+                mChangingStarTime = true;
+                if (mTimeSwith.isChecked()) {
+                    setTimeViewLabel(timeDialogStart);
+                }else if (!hasStarted) {
                     mColorRowAdaper.setColor(0);
+
                 }
             }
         });
+
+
         mFrekvensySwitch = (Switch) view.findViewById(R.id.frekvensy_switch);
         mFrekvensySwitch.setChecked(true);
         mFrekvencySpinner.setEnabled(true);
@@ -228,6 +288,99 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
 
 
         return view;
+    }
+
+    private void setTimeViewLabel(TimePickerDialog.OnTimeSetListener timeDialog) {
+        int currentHour = mCalendar.get(Calendar.HOUR_OF_DAY);
+        int currentMinute = mCalendar.get(Calendar.MINUTE);
+        if (hasStarted && mChangingStarTime) {
+            mColorRowAdaper.setColor(1);
+            new TimePickerDialog(getActivity(),
+                    timeDialog,
+                    currentHour,
+                    currentMinute,
+                    true).show();
+        } else if (hasStarted) {
+            mColorRowAdaper.setColor(1);
+            int minuteDuration = mMinutePicker.getValue();
+            int hourDuration = mHourPicker.getValue();
+
+            if (currentMinute + minuteDuration > 59) {
+                int minutesOver = currentMinute + minuteDuration - 60;
+                minuteDuration += minutesOver;
+                hourDuration++;
+            }
+            hourDuration += currentHour;
+            if (hourDuration > 23) hourDuration = 23;
+
+            new TimePickerDialog(getActivity(),
+                    timeDialog,
+                    hourDuration,
+                    minuteDuration,
+                    true).show();
+        }
+    }
+
+    private void setTimeLabelButtons(TextView timeLabel, final boolean isStartOrStop, final TimePickerDialog.OnTimeSetListener timeDialog) {
+        timeLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mChangingStarTime = isStartOrStop;
+
+                mTimeSwith.setChecked(true);
+                setTimeViewLabel(timeDialog);
+                /*
+                new TimePickerDialog(getActivity(),
+                        timeDialog,
+                        mCalendar.get(Calendar.HOUR_OF_DAY),
+                        mCalendar.get(Calendar.MINUTE),
+                        true).show();
+                        */
+            }
+
+        });
+    }
+
+    private void toggleCollapseView(final CollapseView collapseViewClass, ImageButton imageBtn) {
+        imageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // collapsing all expanding layouts.
+                for (CollapseView collapseView : mCollapseViews) {
+                    if (!collapseView.isCollapsed()) {
+                        collapseView.collapse();
+                    }
+                }
+
+                // For animation
+                if (collapseViewClass.isCollapsed()) { // collapsed
+                    collapseViewClass.expand();
+                } else {
+                    collapseViewClass.collapse();
+                }
+            }
+        });
+    }
+
+    private void toggleCollapseView(final CollapseView collapseViewClass, TextView textView) {
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // collapsing all expanding layouts.
+                for (CollapseView collapseView : mCollapseViews) {
+                    if (!collapseView.isCollapsed()) {
+                        collapseView.collapse();
+                    }
+                }
+
+                // For animation
+                if (collapseViewClass.isCollapsed()) { // collapsed
+                    collapseViewClass.expand();
+                } else {
+                    collapseViewClass.collapse();
+                }
+            }
+        });
     }
 
     private void updateLabel() {
@@ -278,6 +431,7 @@ public class NewEventFragment extends Fragment implements View.OnClickListener, 
         }
 
     }
+
 private void updateLabel(int fixedTime) {
 
     //startTimeLabel.setText(timeFormat.format(mCalendar.getTime()));
@@ -377,7 +531,8 @@ private void updateLabel(int fixedTime) {
         if (mFixedTime > 0 && !mBrandNew) {
             mTimeSwith.setVisibility(View.INVISIBLE);
         } else if (mFixedTime == 0 && !mBrandNew) {
-            curtainView.setVisibility(View.VISIBLE);
+            //curtainView.setVisibility(View.VISIBLE);
+            mCollapseViews[3].setLocked(true);
         }
 
 
@@ -399,24 +554,10 @@ private void updateLabel(int fixedTime) {
             updateLabel(mFixedTime);
             if (mTravelToInt > 0) {
                 mTravelToCheckbox.setChecked(true);
-                /*
-                mMinutePicker.setValue(mMinutePicker.getValue() - mTravelToInt);
-                if (    mMinutePicker.getValue() < mTravelToInt
-                        && hourDuration > 0) {
-                    mHourPicker.setValue(hourDuration-1);
-                }
-                */
                 mFixedTime += mTravelToInt;
             }
             if (mTravelFromInt > 0) {
                 mTravelFromCheckbox.setChecked(true);
-                /*
-                mMinutePicker.setValue(mMinutePicker.getValue() - mTravelFromInt);
-                if (    mMinutePicker.getValue() < mTravelFromInt
-                        && hourDuration > 0) {
-                    mHourPicker.setValue(hourDuration-1);
-                }
-                */
             }
         }
         hasStarted = true;
@@ -426,26 +567,6 @@ private void updateLabel(int fixedTime) {
         if (mTravelFromInt > 0) {
             mMinutePickerTravelFrom.setValue(mTravelFromInt / Constants.MINUTE);
         }
-
-/*
-        if (mMinutePickerTravelTo.getValue() > 0) {
-            mTravelToCheckbox.setChecked(true);
-            if (mTimeSwith.isChecked()) {
-                updateLabel();
-            }
-        } else {
-            mMinutePickerTravelTo.setEnabled(false);
-        }
-        if (mMinutePickerTravelFrom.getValue() > 0) {
-            mTravelFromCheckbox.setChecked(true);
-            if (mTimeSwith.isChecked()) {
-                updateLabel();
-            }
-        } else {
-            mMinutePickerTravelFrom.setEnabled(false);
-        }
-*/
-
 
             // setting the frequency spinner.
             if (bundle.getString(Constants.REPEATING) == null) {
@@ -515,7 +636,6 @@ private void updateLabel(int fixedTime) {
     public void onClick(View v) {
         // Sending event info to Main.
         String name = mName.getText().toString();
-        // TODO: 2015-09-22 set duration for hour as well.
         int duration = mMinutePicker.getValue();
         int hourDuration = mHourPicker.getValue();
         Event event;
@@ -534,7 +654,6 @@ private void updateLabel(int fixedTime) {
             event.setRecurring(mEventFrekvensy);
             event.setStartTimeStamp(mCalendar);
 
-            // FIXME: 2015-09-23 This only works for events created today but since we cant set event for future days yet it is'nt a problem yet.
         } else if (!mFrekvensySwitch.isChecked()) {
             event.setRecurring(Constants.ONCE);
             event.setStartTimeStamp(mCalendar);

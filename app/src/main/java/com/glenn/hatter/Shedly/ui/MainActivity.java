@@ -42,6 +42,10 @@ import java.util.Date;
 public class MainActivity extends Activity implements Communicator {
     public static final String FRAGMENT_TAG = "new Event";
 
+    private android.support.design.widget.FloatingActionButton mNewEventFab;
+    private android.support.design.widget.FloatingActionButton mReplanFab;
+
+
     private NewEventFragment mNewEventFragment;
     private EventQueneFragment mEventQueueFragment;
     private FinishedEventQueryFragment mFinishedEventQueryFragment;
@@ -73,8 +77,7 @@ public class MainActivity extends Activity implements Communicator {
             updateMorningAndNightTime();
         }
     };
-
-
+    private boolean eventsInDb;
 
 
     @Override
@@ -93,45 +96,51 @@ public class MainActivity extends Activity implements Communicator {
         });
 
         mDatasource = new EventDataSource(this);
-        readAndSortEvents();
+        eventsInDb = readAndSortEvents();
 
-        adapter = new EventAdapter(this, mEvent, mDatasource);
-        recyclerView.setAdapter(adapter);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
+        if (eventsInDb) {
+
+            adapter = new EventAdapter(this, mEvent, mDatasource);
+            recyclerView.setAdapter(adapter);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setHasFixedSize(true);
 
 
-        final android.support.design.widget.FloatingActionButton mNewEventFab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.new_event_fab);
-        mNewEventFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Date date = mCalendar.getTime();
-                long timeStamp = (date.getTime()/1000);
-                Bundle bundle = communicateEventpreferences(new Event("New event", 10), timeStamp);
+            mNewEventFab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.new_event_fab);
+            mNewEventFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Date date = mCalendar.getTime();
+                    long timeStamp = (date.getTime() / 1000);
+                    Bundle bundle = communicateEventpreferences(new Event("New event", 10), timeStamp);
 
-                mFragmentManager = getFragmentManager();
-                mNewEventFragment = new NewEventFragment();
-                mNewEventFragment.setArguments(bundle);
-                FragmentTransaction transaction = mFragmentManager.beginTransaction();
-                transaction.add(R.id.main_layout, mNewEventFragment, FRAGMENT_TAG);
-                transaction.addToBackStack("new event");
-                transaction.commit();
-            }
-        });
+                    mFragmentManager = getFragmentManager();
+                    mNewEventFragment = new NewEventFragment();
+                    mNewEventFragment.setArguments(bundle);
+                    FragmentTransaction transaction = mFragmentManager.beginTransaction();
+                    transaction.add(R.id.main_layout, mNewEventFragment, FRAGMENT_TAG);
+                    transaction.addToBackStack("new event");
+                    transaction.commit();
 
-        final android.support.design.widget.FloatingActionButton mReplanFab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.replan_fag);
-        mReplanFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Bundle bundle = new Bundle();
-                ArrayList<Parcelable> bundledEvents = new ArrayList<Parcelable>();
-                bundledEvents.addAll(adapter.getEvents());
+                    setFabInvisible();
+                }
+            });
 
-                bundle.putParcelableArrayList(Constants.PARCELD_EVENT, bundledEvents);
-                queryFinishedEvents(bundle);
-            }
-        });
+            mReplanFab = (android.support.design.widget.FloatingActionButton) findViewById(R.id.replan_fag);
+            mReplanFab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Bundle bundle = new Bundle();
+                    ArrayList<Parcelable> bundledEvents = new ArrayList<Parcelable>();
+                    bundledEvents.addAll(adapter.getEvents());
+
+                    bundle.putParcelableArrayList(Constants.PARCELD_EVENT, bundledEvents);
+                    queryFinishedEvents(bundle);
+
+                    setFabInvisible();
+                }
+            });
 
 
 /*
@@ -175,71 +184,69 @@ public class MainActivity extends Activity implements Communicator {
         });
         */
 
-        // This is where Drag&Drop and swipe to remove occurs
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            // This is where Drag&Drop and swipe to remove occurs
+            ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
 
 
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                boolean moved = false;
-                if (viewHolder.getAdapterPosition() != 1 || viewHolder.getAdapterPosition() != adapter.getItemCount() - 1) {
+                @Override
+                public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                    boolean moved = false;
+                    if (viewHolder.getAdapterPosition() != 1 || viewHolder.getAdapterPosition() != adapter.getItemCount() - 1) {
 
-                    if (viewHolder.getItemViewType() == 0) {
+                        if (viewHolder.getItemViewType() == 0) {
+                            return false;
+                        }
+                        if (target.getItemViewType() == 1) {
+                            final int fromPos = viewHolder.getAdapterPosition();
+                            final int toPos = target.getAdapterPosition();
+
+                            moved = adapter.move(fromPos, toPos);
+                        }
+
+                        // move item in `fromPos` to `toPos` in adapter.
+                        // adapter.notifyItemMoved(fromPos, toPos);
+                        return moved;// true if moved, false otherwise
+                    } else {
                         return false;
                     }
-                    if (target.getItemViewType() == 1) {
-                        final int fromPos = viewHolder.getAdapterPosition();
-                        final int toPos = target.getAdapterPosition();
 
-                        moved = adapter.move(fromPos, toPos);
-                    }
-
-                    // move item in `fromPos` to `toPos` in adapter.
-                    // adapter.notifyItemMoved(fromPos, toPos);
-                    return moved;// true if moved, false otherwise
-                } else {
-                    return false;
                 }
 
-            }
+
+                @Override
+                public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                    //Remove swiped item from list and notify the RecyclerView
+                    if (viewHolder.getItemViewType() == 1) {
+                        if (viewHolder.getLayoutPosition() != 1 && viewHolder.getLayoutPosition() != adapter.getItemCount() - 1) {
+                            if (swipeDir == ItemTouchHelper.LEFT) {
+                                // Remove and add to freeTime.
+                                adapter.replaceEvent(viewHolder.getLayoutPosition(), false);
+                                Toast.makeText(MainActivity.this, R.string.removing_event_message, Toast.LENGTH_SHORT).show();
+
+                            } else if (swipeDir == ItemTouchHelper.RIGHT) {
+                                // As remove and add to Queue
+                                adapter.replaceEvent(viewHolder.getLayoutPosition(), true);
 
 
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                //Remove swiped item from list and notify the RecyclerView
-                if (viewHolder.getItemViewType() == 1) {
-                    if (viewHolder.getLayoutPosition() != 1 && viewHolder.getLayoutPosition() != adapter.getItemCount()-1) {
-                        if (swipeDir == ItemTouchHelper.LEFT) {
-                            // Remove and add to freeTime.
-                            adapter.replaceEvent(viewHolder.getLayoutPosition(), false);
-                            Toast.makeText(MainActivity.this, R.string.removing_event_message, Toast.LENGTH_SHORT).show();
-
-                        } else if (swipeDir == ItemTouchHelper.RIGHT) {
-                            // As remove and add to Queue
-                            adapter.replaceEvent(viewHolder.getLayoutPosition(), true);
-
-
+                            }
+                        } else {
+                            adapter.notifyDataSetChanged();
                         }
                     } else {
                         adapter.notifyDataSetChanged();
                     }
-                } else {
-                    adapter.notifyDataSetChanged();
                 }
-            }
 
 
-        };
+            };
 
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-
-
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
 
 
+            itemTouchHelper.attachToRecyclerView(recyclerView);
 
 
+        }
     }
 
     private void showDatePicker() {
@@ -248,6 +255,11 @@ public class MainActivity extends Activity implements Communicator {
     }
 
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setFabVisible();
+    }
 
     private Bundle communicateEventpreferences(Event event, long timeStamp) {
         // Will send the name and duration to EventFragment
@@ -288,15 +300,17 @@ public class MainActivity extends Activity implements Communicator {
         context.startActivity(starter);
     }
 
-    private void readAndSortEvents() {
+    private boolean readAndSortEvents() {
         mEvent = mDatasource.read();
         // Checking if morning and eventing is there and add it if not.
         if (mEvent.size() == 0) {
             start(this);
+            return false;
         }
         // Sorts reoccurring events.
         SortEvent sortEvent = new SortEvent(mCalendar, mEvent);
         mEvent = sortEvent.getEvents();
+        return true;
     }
 
     private void updateMorningAndNightTime() {
@@ -315,9 +329,9 @@ public class MainActivity extends Activity implements Communicator {
     @Override
     protected void onPause() {
         super.onPause();
-        adapter.saveDate();
-        Toast.makeText(this, "Day saved.", Toast.LENGTH_SHORT).show();
-
+        if (eventsInDb) {
+            adapter.saveDate();
+        }
     }
 
     @Override
@@ -349,6 +363,12 @@ public class MainActivity extends Activity implements Communicator {
         mEventQueueFragment = new EventQueneFragment();
         mEventQueueFragment.setArguments(bundle);
         FragmentTransaction transaction = mFragmentManager.beginTransaction();
+
+        transaction.setCustomAnimations(R.animator.fragment_slide_left_enter,
+                R.animator.fragment_slide_left_exit,
+                R.animator.fragment_slide_right_enter,
+                R.animator.fragment_slide_right_exit);
+
         transaction.add(R.id.main_layout, mEventQueueFragment, FRAGMENT_TAG);
         transaction.addToBackStack("event Quene");
         transaction.commit();
@@ -437,9 +457,19 @@ public class MainActivity extends Activity implements Communicator {
             adapter.removeEvent(integer);
             mDatasource.delete(integer);
 
+
         }
         mMorning = true;
         updateMorningAndNightTime();
+    }
+
+    private void setFabVisible() {
+        mReplanFab.setVisibility(View.VISIBLE);
+        mNewEventFab.setVisibility(View.VISIBLE);
+    }
+    private void setFabInvisible() {
+        mReplanFab.setVisibility(View.INVISIBLE);
+        mNewEventFab.setVisibility(View.INVISIBLE);
     }
 
 
@@ -484,6 +514,14 @@ public class MainActivity extends Activity implements Communicator {
         if (fractionTag.equals(Constants.QUEUE_FRACTION)) {
             EventQueneFragment eventFragment = (EventQueneFragment) mFragmentManager.findFragmentByTag(FRAGMENT_TAG);
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
+
+
+            transaction.setCustomAnimations(
+                    R.animator.fragment_slide_right_enter,
+                    R.animator.fragment_slide_right_exit,
+                    R.animator.fragment_slide_left_enter,
+                    R.animator.fragment_slide_left_exit);
+
             if (eventFragment != null) {
                 transaction.remove(eventFragment);
                 transaction.commit();
@@ -501,6 +539,8 @@ public class MainActivity extends Activity implements Communicator {
                 Toast.makeText(this, "The Fragment was not added before", Toast.LENGTH_SHORT).show();
             }
         }
+
+        setFabVisible();
     }
 
 

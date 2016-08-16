@@ -54,6 +54,7 @@
         android:layout_height="wrap_content"
         android:background="#00ACF4"
 
+        android:animateLayoutChanges="true"
         android:orientation="vertical"
         android:paddingTop="10dp"
         android:paddingLeft="10dp"
@@ -213,7 +214,9 @@
     android:id="@+id/textView3"
     android:layout_above="@+id/background_repeat"
     android:layout_alignParentRight="true"
-    android:layout_alignParentEnd="true"/>
+    android:layout_alignParentEnd="true"
+
+    />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -441,6 +444,16 @@
         android:layout_toStartOf="@+id/textView5"
         android:layout_alignTop="@+id/duration_layout"/>
 
+    <Button
+        android:text="Disapear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="17dp"
+        android:layout_marginEnd="17dp"
+        android:id="@+id/new_event_fragment_disapear_brn"
+        android:layout_below="@+id/repeat_background"
+        android:layout_alignRight="@+id/textView2"
+        android:layout_alignEnd="@+id/textView2"/>
 
 
 </RelativeLayout>

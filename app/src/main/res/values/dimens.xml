@@ -5,4 +5,5 @@
     <dimen name="numberpicker_width">30dp</dimen>
     <dimen name="switch_textsize">15sp</dimen>
     <dimen name="checkbox_margin_top">0dp</dimen>
+    <dimen name="main_calendar_witdh">30dp</dimen>
 </resources>

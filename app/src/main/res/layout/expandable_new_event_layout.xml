@@ -1,8 +1,425 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
-              android:orientation="vertical"
-              android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:background="#ffffffff"
+                android:layout_marginTop="@dimen/main_calendar_witdh"
+                android:clickable="true"
+                android:layout_width="match_parent"
               android:layout_height="match_parent">
 
-</LinearLayout>
+
+    <ImageButton
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:text="New Button"
+        android:id="@+id/cancel_event"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:src="@mipmap/ic_back_pixel"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/events_name_textfield"/>
+
+
+    <EditText
+        android:id="@+id/events_name_textfield"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:focusable="true"
+        android:hint="@string/name_edit_label"
+        android:layout_marginBottom="10dp"
+        android:textColorHint="#CCCCCC"
+        android:layout_toRightOf="@+id/cancel_event"
+
+
+        android:layout_toStartOf="@+id/comfirm_event_button"/>
+
+
+    <ImageButton
+        android:id="@+id/comfirm_event_button"
+        android:src="@mipmap/ic_done_white"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/events_name_textfield"
+
+        />
+
+
+    <TextView
+        android:id="@+id/travel_textfield"
+        android:text="@string/duration_textfield"
+        style="@style/new_event_expand_label_style"
+
+        />
+
+    <ImageView
+        android:id="@+id/new_event_imageview_duration"
+        android:layout_alignTop="@+id/new_event_imageButton_duration"
+        android:src="@drawable/ic_duration_icon"
+        style="@style/new_event_imageview_style"
+        />
+
+    <ImageButton
+        android:text="Button"
+        android:src="@drawable/ic_expand_more"
+        android:layout_below="@+id/comfirm_event_button"
+        android:id="@+id/new_event_imageButton_duration"
+        style="@style/new_event_expand_button_style"/>
+
+
+    <LinearLayout
+        android:id="@+id/duration_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:paddingRight="20dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@+id/new_event_imageButton_duration"
+        android:layout_alignLeft="@+id/travel_textfield"
+        android:layout_alignStart="@+id/travel_textfield">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:orientation="horizontal"
+            >
+
+
+            <NumberPicker
+                android:id="@+id/hour_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+            <NumberPicker
+                android:id="@+id/numberPicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/duration_textfield"
+
+        style="@style/new_event_expand_label_style"
+        android:layout_below="@+id/duration_layout"
+        android:text="@string/travel_time_textfield"
+
+        />
+
+    <LinearLayout
+        android:id="@+id/travel_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:layout_below="@+id/new_event_imageButton_travel_time"
+
+        >
+        <TextView
+            android:id="@+id/travel_to_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/travel_checkbox_label_to"
+            android:layout_marginLeft="20dp"
+            android:paddingTop="10dp"
+            android:paddingLeft="10dp"
+            />
+
+
+        <CheckBox
+            android:id="@+id/travel_to_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#755600"
+            android:checked="false"
+            android:layout_toLeftOf="@+id/numberPicker_travel_dur_to"
+            android:layout_below="@+id/travel_to_label"
+
+            />
+
+
+        <NumberPicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="45dp"
+            android:id="@+id/numberPicker_travel_dur_to"
+            android:paddingTop="10dp"
+            android:layout_alignTop="@+id/numberPicker_travel_dur_from"
+            android:layout_toLeftOf="@+id/numberPicker_travel_dur_from"
+            />
+
+        <TextView
+            android:id="@+id/travel_from_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/travel_checkbox_label_from"
+            android:paddingTop="10dp"
+            android:layout_marginRight="5dp"
+            android:layout_above="@+id/travel_from_checkbox"
+            android:layout_alignRight="@+id/travel_from_checkbox"
+            android:layout_alignEnd="@+id/travel_from_checkbox"/>
+
+
+        <CheckBox
+            android:id="@+id/travel_from_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#755600"
+            android:checked="false"
+            android:layout_alignTop="@+id/travel_to_checkbox"
+            android:layout_toLeftOf="@+id/numberPicker_travel_dur_from"
+            android:layout_toStartOf="@+id/numberPicker_travel_dur_from"/>
+
+
+        <NumberPicker
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="right"
+            android:id="@+id/numberPicker_travel_dur_from"
+            android:layout_above="@+id/repete_textfield"
+            android:layout_alignRight="@+id/textView5"
+            android:layout_alignEnd="@+id/textView5"/>
+
+
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/new_event_imageview_travel_time"
+        android:layout_alignTop="@+id/new_event_imageButton_travel_time"
+        android:src="@drawable/ic_drive_eta_24dp"
+        style="@style/new_event_imageview_style"
+        />
+
+
+    <ImageButton
+        android:id="@+id/new_event_imageButton_travel_time"
+        android:src="@drawable/ic_expand_more"
+
+        android:layout_below="@+id/duration_layout"
+        style="@style/new_event_expand_button_style"/>
+
+    <TextView
+        android:id="@+id/repeat_textview"
+        android:layout_below="@+id/travel_layout"
+        android:text="@string/repeat_textfield"
+
+        style="@style/new_event_expand_label_style"
+
+        />
+
+
+    <ImageView
+        android:id="@+id/new_event_imageview_repeat"
+        android:layout_alignTop="@+id/new_event_imageButton_repeat"
+        android:src="@drawable/ic_repeat_icon"
+        style="@style/new_event_imageview_style"
+        />
+
+
+    <ImageButton
+        android:id="@+id/new_event_imageButton_repeat"
+        android:text="Button"
+        android:src="@drawable/ic_expand_more"
+        android:layout_below="@+id/travel_layout"
+        style="@style/new_event_expand_button_style"/>
+
+    <LinearLayout
+        android:id="@+id/new_event_repeat_layout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:animateLayoutChanges="true"
+        android:orientation="horizontal"
+        android:layout_below="@+id/new_event_imageButton_repeat"
+        android:layout_marginTop="8dp"
+        >
+
+
+        <Spinner
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorLightPrimary"
+            android:id="@+id/frekventspinner"
+            android:layout_weight="1"
+            android:layout_marginLeft="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_below="@+id/repete_textfield"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+
+        <Switch
+            android:id="@+id/frekvensy_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/switch_textsize"
+            android:layout_gravity="right"
+            android:padding="6dp"
+            android:layout_below="@+id/repete_textfield"
+            android:layout_alignLeft="@+id/repete_textfield"
+            android:layout_alignStart="@+id/repete_textfield"/>
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/new_event_fix_time_textview"
+        style="@style/new_event_expand_label_style"
+        android:layout_below="@+id/new_event_repeat_layout"
+        android:text="@string/quene_type_label_fixed"
+        />
+
+
+    <ImageView
+        android:id="@+id/new_event_imageview_fixed_time"
+        android:layout_alignTop="@+id/new_event_imageButton_fix_time"
+        android:src="@drawable/ic_fixed_time_icon"
+        style="@style/new_event_imageview_style"
+        />
+
+
+    <ImageButton
+        android:text="Button"
+        android:id="@+id/new_event_imageButton_fix_time"
+        android:src="@drawable/ic_expand_more"
+        android:layout_below="@+id/new_event_repeat_layout"
+        style="@style/new_event_expand_button_style"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:animateLayoutChanges="true"
+        android:paddingTop="15dp"
+        android:layout_below="@+id/new_event_imageButton_fix_time"
+        android:id="@+id/new_event_fix_time_layout"
+        >
+
+
+
+
+        <TextView
+            android:id="@+id/stop_time_explanation_text"
+            android:text="@string/time_from_textfield"
+            android:layout_marginStart="25dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:textSize="15sp"
+            android:gravity="fill_vertical"/>
+        <TextView
+            android:id="@+id/start_time_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_time_label"
+            android:layout_weight="1"
+            android:textSize="27sp"
+            />
+
+
+
+        <TextView
+            android:id="@+id/start_time_explanation_text"
+            android:layout_weight="0.5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time_to_textfield"
+            android:textSize="15sp"
+            />
+        <TextView
+            android:id="@+id/stop_time_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_time_label"
+            android:textSize="27sp"
+            android:layout_weight="1"
+
+            />
+
+        <Switch
+            android:id="@+id/time_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="false"
+            android:padding="6dp"
+            />
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/new_event_color_textview"
+        style="@style/new_event_expand_label_style"
+        android:layout_below="@+id/new_event_fix_time_layout"
+        android:text="@string/new_event_color_text"
+        />
+
+
+
+    <ImageView
+        android:id="@+id/new_event_imageview_color"
+        android:layout_alignTop="@+id/new_event_imageButton_color"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/ic_color_icon"
+        style="@style/new_event_imageview_style"
+        />
+
+    <ImageButton
+        android:id="@+id/new_event_imageButton_color"
+        android:src="@drawable/ic_expand_more"
+        android:layout_below="@+id/new_event_fix_time_layout"
+        style="@style/new_event_expand_button_style"/>
+
+
+    <LinearLayout
+        android:id="@+id/new_event_color_layout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:animateLayoutChanges="true"
+        android:orientation="horizontal"
+        android:layout_below="@+id/new_event_imageButton_color"
+        android:layout_marginTop="8dp"
+        >
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/color_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            />
+
+
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_margin="20dp"
+        android:layout_below="@+id/new_event_color_layout"
+        android:background="@color/colorLightPrimary"
+
+        />
+
+</RelativeLayout>

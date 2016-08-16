@@ -6,8 +6,10 @@ import com.glenn.hatter.Shedly.data.Event;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runners.Parameterized;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 import static org.junit.Assert.*;
@@ -41,7 +43,6 @@ public class ScheduleDayTest {
         mScheduleDay = new ScheduleDay(mScheckpoints);
         mScheckpoints = mScheduleDay.getEvent();
     }
-
 
 
     @Test
